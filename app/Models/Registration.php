@@ -19,6 +19,7 @@ class Registration extends Model
      */
     protected $fillable = [
         'camp_edition_id',
+        'edition_section_id',
         'registration_number',
         'first_name',
         'last_name',
@@ -26,7 +27,6 @@ class Registration extends Model
         'phone',
         'whatsapp_phone',
         'city',
-        'section',
         'total_amount',
         'paid_amount',
         'remaining_amount',
@@ -62,8 +62,14 @@ class Registration extends Model
 
     public function campEdition(): BelongsTo
     {
-        // Chaque inscription appartient obligatoirement à une édition du camp.
+        // Chaque inscription appartient obligatoirement a une edition du camp.
         return $this->belongsTo(CampEdition::class);
+    }
+
+    public function editionSection(): BelongsTo
+    {
+        // Chaque inscription utilise un tarif de section defini pour son edition.
+        return $this->belongsTo(EditionSection::class);
     }
 
     public function payments(): HasMany

@@ -23,7 +23,6 @@ class CampEdition extends Model
         'registration_close_at',
         'camp_start_date',
         'camp_end_date',
-        'total_price',
         'currency',
         'status',
         'is_active',
@@ -38,15 +37,20 @@ class CampEdition extends Model
         'registration_close_at' => 'datetime',
         'camp_start_date' => 'date',
         'camp_end_date' => 'date',
-        'total_price' => 'decimal:2',
         'status' => CampEditionStatus::class,
         'is_active' => 'boolean',
     ];
 
     public function registrations(): HasMany
     {
-        // Une édition de camp regroupe plusieurs inscriptions publiques.
+        // Une edition de camp regroupe plusieurs inscriptions publiques.
         return $this->hasMany(Registration::class);
+    }
+
+    public function editionSections(): HasMany
+    {
+        // Une edition definit ses propres sections officielles et tarifs.
+        return $this->hasMany(EditionSection::class);
     }
 
     public function scopeOpen(Builder $query): Builder

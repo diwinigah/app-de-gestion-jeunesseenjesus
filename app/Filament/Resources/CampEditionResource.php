@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\CampEditionStatus;
 use App\Filament\Resources\CampEditionResource\Pages;
+use App\Filament\Resources\CampEditionResource\RelationManagers;
 use App\Models\CampEdition;
 use App\Services\CampEditionService;
 use Filament\Forms;
@@ -98,13 +99,6 @@ class CampEditionResource extends Resource
 
                 Forms\Components\Section::make('Tarification')
                     ->schema([
-                        Forms\Components\TextInput::make('total_price')
-                            ->label('Prix total')
-                            ->placeholder('0.00')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0)
-                            ->default(0),
                         Forms\Components\TextInput::make('currency')
                             ->label('Devise')
                             ->placeholder('XOF')
@@ -250,6 +244,16 @@ class CampEditionResource extends Resource
         $value = $status instanceof CampEditionStatus ? $status->value : $status;
 
         return self::statusOptions()[$value] ?? $value;
+    }
+
+    /**
+     * @return array<int, class-string>
+     */
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\EditionSectionsRelationManager::class,
+        ];
     }
 
     /**
