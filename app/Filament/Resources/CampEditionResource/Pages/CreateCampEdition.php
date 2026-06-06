@@ -4,27 +4,184 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CampEditionResource\Pages;
 
+use App\Enums\SectionType;
 use App\Filament\Resources\CampEditionResource;
 use App\Models\CampEdition;
 use App\Services\CampEditionService;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CreateCampEdition extends CreateRecord
 {
     protected static string $resource = CampEditionResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Wizard::make([
+                    self::getInformationsStep(),
+                    self::getSectionsStep(),
+                ])
+                ->columnSpanFull(),
+            ]);
+    }
+
+    public static function getInformationsStep(): Forms\Components\Wizard\Step
+    {
+        return Forms\Components\Wizard\Step::make('Informations de l\'edition')
+            ->schema([
+                Forms\Components\Section::make('Generales')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nom de l\'edition')
+                            ->placeholder('Exemple : Camp 2026')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (?string $state, Forms\Set $set): void {
+                                if ($state !== null) {
+                                    $set('slug', Str::slug($state));
+                                }
+                            }),
+                        Forms\Components\TextInput::make('slug')
+                            ->label('Slug')
+                            ->placeholder('camp-2026')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique('camp_editions', 'slug'),
+                        Forms\Components\TextInput::make('year')
+                            ->label('Annee')
+                            ->placeholder('2026')
+                            ->required()
+                            ->integer()
+                            ->minValue(2000)
+                            ->maxValue(2100),
+                    ])
+                    ->columns(3),
+
+                Forms\Components\Section::make('Dates')
+                    ->schema([
+                        Forms\Components\DateTimePicker::make('registration_open_at')
+                            ->label('Ouverture des inscriptions')
+                            ->placeholder('Selectionner la date et l heure')
+                            ->required()
+                            ->seconds(false),
+                        Forms\Components\DateTimePicker::make('registration_close_at')
+                            ->label('Fermeture des inscriptions')
+                            ->placeholder('Selectionner la date et l heure')
+                            ->required()
+                            ->seconds(false)
+                            ->after('registration_open_at'),
+                        Forms\Components\DatePicker::make('camp_start_date')
+                            ->label('Debut du camp')
+                            ->placeholder('Selectionner la date'),
+                        Forms\Components\DatePicker::make('camp_end_date')
+                            ->label('Fin du camp')
+                            ->placeholder('Selectionner la date')
+                            ->afterOrEqual('camp_start_date'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Configuration')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->label('Statut')
+                            ->options(CampEditionResource::statusOptions())
+                            ->required()
+                            ->native(false)
+                            ->default('draft'),
+                    ]),
+
+                Forms\Components\Section::make('Description')
+                    ->schema([
+                        Forms\Components\Textarea::make('description')
+                            ->label('Description')
+                            ->placeholder('Informations internes ou publiques sur cette edition')
+                            ->rows(5),
+                    ]),
+            ]);
+    }
+
+    public static function getSectionsStep(): Forms\Components\Wizard\Step
+    {
+        return Forms\Components\Wizard\Step::make('Sections et tarifs')
+            ->description('Definir les tarifs pour chaque section')
+            ->schema([
+                Forms\Components\Repeater::make('sections')
+                    ->label('Sections et tarifs')
+                    ->minItems(6)
+                    ->maxItems(6)
+                    ->disabled(false)
+                    ->default(fn (): array => array_map(
+                        fn (SectionType $section): array => [
+                            'section_enum' => $section->value,
+                            'section_label' => $section->label(),
+                        ],
+                        SectionType::cases(),
+                    ))
+                    ->schema([
+                        Forms\Components\Select::make('section_enum')
+                            ->label('Section')
+                            ->options(fn (): array => array_combine(
+                                array_map(fn (SectionType $s): string => $s->value, SectionType::cases()),
+                                array_map(fn (SectionType $s): string => $s->label(), SectionType::cases()),
+                            ))
+                            ->required()
+                            ->native(false)
+                            ->disabled(),
+
+                        Forms\Components\TextInput::make('price')
+                            ->label('Tarif (XOF)')
+                            ->placeholder('0.00')
+                            ->required()
+                            ->numeric()
+                            ->minValue(0)
+                            ->step(0.01),
+
+                        Forms\Components\TextInput::make('description')
+                            ->label('Description')
+                            ->placeholder('Tarif reduit, special famille, etc.')
+                            ->maxLength(255),
+                    ])
+                    ->columns(3)
+                    ->reorderableWithButtons(),
+            ]);
+    }
 
     /**
      * @param array<string, mixed> $data
      */
     protected function handleRecordCreation(array $data): Model
     {
-        return app(CampEditionService::class)->createEdition($data);
+        $sectionsData = [];
+
+        // Transform sections data for createWithSections()
+        if (! empty($data['sections']) && is_array($data['sections'])) {
+            foreach ($data['sections'] as $section) {
+                $sectionsData[$section['section_enum']] = [
+                    'price' => (float) $section['price'],
+                    'description' => $section['description'] ?? null,
+                ];
+            }
+        }
+
+        // Remove sections from data before passing to service
+        unset($data['sections']);
+
+        // Set currency to XOF (default)
+        $data['currency'] = 'XOF';
+
+        // Create edition with sections in transaction
+        return app(CampEditionService::class)->createWithSections($data, $sectionsData);
     }
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'Edition creee';
+        return 'Edition creee avec sections';
     }
 
     protected function getRedirectUrl(): string
@@ -35,3 +192,5 @@ class CreateCampEdition extends CreateRecord
         return static::getResource()::getUrl('edit', ['record' => $record]);
     }
 }
+
+

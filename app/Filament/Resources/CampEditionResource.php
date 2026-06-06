@@ -121,7 +121,9 @@ class CampEditionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withCount('registrations'))
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query
+                ->withCount('registrations')
+                ->withCount('editionSections'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nom')
@@ -156,6 +158,12 @@ class CampEditionResource extends Resource
                 Tables\Columns\TextColumn::make('registrations_count')
                     ->label('Inscrits')
                     ->counts('registrations')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('edition_sections_count')
+                    ->label('Sections')
+                    ->icon(fn (CampEdition $record): string => ($record->edition_sections_count ?? 0) > 0 ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-circle')
+                    ->color(fn (CampEdition $record): string => ($record->edition_sections_count ?? 0) > 0 ? 'success' : 'warning')
+                    ->tooltip(fn (CampEdition $record): string => ($record->edition_sections_count ?? 0) > 0 ? 'Sections definies' : 'Aucune section — formulaire public vide')
                     ->sortable(),
             ])
             ->filters([
