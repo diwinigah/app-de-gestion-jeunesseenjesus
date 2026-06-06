@@ -10,6 +10,7 @@ use App\Enums\RegistrationStatus;
 use App\Enums\SectionType;
 use App\Filament\Exports\RegistrationExporter;
 use App\Filament\Resources\RegistrationResource\Pages;
+use App\Filament\Resources\RegistrationResource\RelationManagers;
 use App\Models\CampEdition;
 use App\Models\EditionSection;
 use App\Models\Registration;
@@ -41,6 +42,36 @@ class RegistrationResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Resume des paiements')
+                    ->description('Affichage des montants de cette inscription')
+                    ->schema([
+                        Forms\Components\TextInput::make('total_amount')
+                            ->label('Montant total')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->total_amount, 2, ',', ' ')),
+
+                        Forms\Components\TextInput::make('paid_amount')
+                            ->label('Montant paye')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->paid_amount, 2, ',', ' ')),
+
+                        Forms\Components\TextInput::make('remaining_amount')
+                            ->label('Montant restant')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->remaining_amount, 2, ',', ' ')),
+
+                        Forms\Components\Select::make('payment_status')
+                            ->label('Statut paiement')
+                            ->options(self::paymentStatusOptions())
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn (PaymentStatus|string $state): string => self::paymentStatusLabel($state)),
+                    ])
+                    ->columns(4),
+
                 Forms\Components\Section::make('Edition et section')
                     ->schema([
                         Forms\Components\Select::make('camp_edition_id')
@@ -51,14 +82,7 @@ class RegistrationResource extends Resource
                             ->live(),
                         Forms\Components\Select::make('edition_section_id')
                             ->label('Section')
-                            ->options(fn (Forms\Get $get): array => EditionSection::query()
-                                ->where('camp_edition_id', $get('camp_edition_id'))
-                                ->orderBy('section')
-                                ->get()
-                                ->mapWithKeys(fn (EditionSection $section): array => [
-                                    $section->getKey() => $section->section->label() . ' - ' . number_format((float) $section->price, 0, ',', ' '),
-                                ])
-                                ->all())
+                            ->options(fn (Forms\Get $get): array => self::getEditionSectionOptions((int) $get('camp_edition_id')))
                             ->required()
                             ->native(false),
                         Forms\Components\TextInput::make('registration_number')
@@ -172,6 +196,10 @@ class RegistrationResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->label())
                     ->color(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->color())
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('remaining_amount')
+                    ->label('Montant restant')
+                    ->money('XOF')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Paiement')
@@ -310,6 +338,34 @@ class RegistrationResource extends Resource
         $value = $status instanceof RegistrationStatus ? $status->value : $status;
 
         return self::registrationStatusOptions()[$value] ?? $value;
+    }
+
+    /**
+     * @return array<int, class-string>
+     */
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\PaymentsRelationManager::class,
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function getEditionSectionOptions(int $campEditionId): array
+    {
+        $options = [];
+        $sections = EditionSection::query()
+            ->where('camp_edition_id', $campEditionId)
+            ->orderBy('section')
+            ->get();
+
+        foreach ($sections as $section) {
+            $options[$section->getKey()] = $section->section->label() . ' - ' . number_format((float) $section->price, 0, ',', ' ');
+        }
+
+        return $options;
     }
 
     /**
