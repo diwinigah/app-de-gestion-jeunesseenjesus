@@ -191,6 +191,18 @@ class RegistrationResource extends Resource
                     ->label('Ville')
                     ->searchable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Téléphone')
+                    ->searchable()
+                    ->copyable()
+                    ->icon('heroicon-o-phone')
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('whatsapp_phone')
+                    ->label('WhatsApp')
+                    ->copyable()
+                    ->icon('heroicon-o-chat-bubble-left')
+                    ->toggleable()
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('editionSection.section')
                     ->label('Section')
                     ->badge()

@@ -41,10 +41,7 @@ class Registration extends Model
     /**
      * @var list<string>
      */
-    protected $hidden = [
-        'phone',
-        'whatsapp_phone',
-    ];
+    protected $hidden = [];
 
     /**
      * @var array<string, string>

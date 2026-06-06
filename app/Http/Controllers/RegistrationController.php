@@ -23,7 +23,7 @@ class RegistrationController extends Controller
         ]);
     }
 
-    public function store(StoreRegistrationRequest $request, RegistrationService $registrationService): View|RedirectResponse
+    public function store(StoreRegistrationRequest $request, RegistrationService $registrationService): RedirectResponse
     {
         $edition = $registrationService->getOpenEdition();
 
@@ -35,8 +35,24 @@ class RegistrationController extends Controller
 
         $registration = $registrationService->createRegistration($request->validated(), $edition);
 
+        return redirect()
+            ->route('registration.confirmation')
+            ->with('registration_number', $registration->registration_number)
+            ->with('first_name', $registration->first_name);
+    }
+
+    public function confirmation(): View|RedirectResponse
+    {
+        $registrationNumber = session('registration_number');
+        $firstName = session('first_name');
+
+        if ($registrationNumber === null || $firstName === null) {
+            return redirect()->route('registration.show');
+        }
+
         return view('registration.success', [
-            'registration' => $registration->registration_number,
+            'registration' => $registrationNumber,
+            'first_name' => $firstName,
         ]);
     }
 }
