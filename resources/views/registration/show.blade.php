@@ -21,6 +21,8 @@
         button { width: 100%; border: 0; border-radius: 6px; background: #155eef; color: #fff; padding: 13px 16px; font-size: 1rem; font-weight: 700; cursor: pointer; }
         button:hover { background: #124ac0; }
         .hint { color: #667085; font-size: .94rem; margin-top: 4px; }
+        .form-note { font-size: 0.78rem; color: #888; margin-top: 4px; line-height: 1.4; }
+        .form-note strong { color: #c0392b; }
         @media (min-width: 680px) { .grid.two { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
@@ -81,13 +83,18 @@
         <div class="grid two" style="margin-top:16px">
             <div>
                 <label for="phone">Telephone</label>
-                <input id="phone" name="phone" value="{{ old('phone') }}" required autocomplete="tel">
+                <input id="phone" name="phone" type="tel" inputmode="tel" pattern="[\+0-9\s\-\(\)]{7,20}" value="{{ old('phone') }}" required autocomplete="tel">
                 @error('phone') <div class="error">{{ $message }}</div> @enderror
+                <p class="form-note">
+                    📞 Indicatif international accepté (ex: +228, +33).<br>
+                    <strong>NB :</strong> Numéro valide exigé pour
+                    la finalisation du paiement et de l'inscription.
+                </p>
             </div>
 
             <div>
                 <label for="whatsapp_phone">WhatsApp</label>
-                <input id="whatsapp_phone" name="whatsapp_phone" value="{{ old('whatsapp_phone') }}" autocomplete="tel">
+                <input id="whatsapp_phone" name="whatsapp_phone" type="tel" inputmode="tel" pattern="[\+0-9\s\-\(\)]{7,20}" value="{{ old('whatsapp_phone') }}" autocomplete="tel">
                 <div class="hint">Facultatif.</div>
                 @error('whatsapp_phone') <div class="error">{{ $message }}</div> @enderror
             </div>
