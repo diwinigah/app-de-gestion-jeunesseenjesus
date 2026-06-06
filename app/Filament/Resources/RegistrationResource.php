@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Enums\Gender;
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Enums\RegistrationStatus;
 use App\Enums\SectionType;
@@ -14,6 +15,7 @@ use App\Filament\Resources\RegistrationResource\RelationManagers;
 use App\Models\CampEdition;
 use App\Models\EditionSection;
 use App\Models\Registration;
+use App\Services\RegistrationPaymentService;
 use App\Services\RegistrationService;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Forms;
@@ -296,6 +298,79 @@ class RegistrationResource extends Resource
                             ->success()
                             ->send();
                     }),
+                Tables\Actions\Action::make('confirm_payment')
+                    ->label('Paiement confirmé')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Registration $record): bool => $record->payment_status !== PaymentStatus::Paid)
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirmer le paiement complet ?')
+                    ->modalDescription('Le montant restant sera mis à zéro et le statut passera à Payé.')
+                    ->action(function (Registration $record, RegistrationPaymentService $service): void {
+                        try {
+                            $service->recalculateAmounts($record->fresh());
+                            $record->update([
+                                'paid_amount' => $record->total_amount,
+                                'remaining_amount' => 0,
+                                'payment_status' => PaymentStatus::Paid,
+                            ]);
+
+                            Notification::make()
+                                ->title('Paiement confirmé')
+                                ->success()
+                                ->send();
+                        } catch (\InvalidArgumentException $e) {
+                            Notification::make()
+                                ->title('Impossible de confirmer')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+                Tables\Actions\Action::make('partial_payment')
+                    ->label('Paiement partiel')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('warning')
+                    ->visible(fn (Registration $record): bool => $record->payment_status === PaymentStatus::Unpaid)
+                    ->form([
+                        Forms\Components\TextInput::make('amount')
+                            ->label('Montant versé')
+                            ->required()
+                            ->numeric()
+                            ->minValue(0),
+                        Forms\Components\Select::make('payment_method')
+                            ->label('Méthode')
+                            ->options(self::paymentMethodOptions())
+                            ->required()
+                            ->native(false),
+                        Forms\Components\TextInput::make('reference')
+                            ->label('Référence')
+                            ->nullable(),
+                        Forms\Components\DatePicker::make('paid_at')
+                            ->label('Date paiement')
+                            ->required(),
+                    ])
+                    ->action(function (Registration $record, array $data, RegistrationPaymentService $service): void {
+                        try {
+                            $service->addPayment($record, [
+                                'amount' => (float) $data['amount'],
+                                'payment_method' => $data['payment_method'],
+                                'reference' => $data['reference'] ?? null,
+                                'paid_at' => $data['paid_at'],
+                            ], auth()->user());
+
+                            Notification::make()
+                                ->title('Paiement partiel enregistré')
+                                ->success()
+                                ->send();
+                        } catch (\InvalidArgumentException $e) {
+                            Notification::make()
+                                ->title('Montant invalide')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 Tables\Actions\EditAction::make()
                     ->label('Modifier'),
             ])
@@ -319,6 +394,20 @@ class RegistrationResource extends Resource
             Gender::Male->value => 'Homme',
             Gender::Female->value => 'Femme',
             Gender::Other->value => 'Autre',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function paymentMethodOptions(): array
+    {
+        return [
+            PaymentMethod::Cash->value => 'Espèces',
+            PaymentMethod::MobileMoney->value => 'Mobile Money',
+            PaymentMethod::BankTransfer->value => 'Virement bancaire',
+            PaymentMethod::Cheque->value => 'Chèque',
+            PaymentMethod::Other->value => 'Autre',
         ];
     }
 
