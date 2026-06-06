@@ -178,41 +178,46 @@ class RegistrationResource extends Resource
                 Tables\Columns\TextColumn::make('registration_number')
                     ->label('Numero')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('last_name')
                     ->label('Nom')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('first_name')
                     ->label('Prenom')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('city')
                     ->label('Ville')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Téléphone')
                     ->searchable()
                     ->copyable()
                     ->icon('heroicon-o-phone')
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('whatsapp_phone')
                     ->label('WhatsApp')
                     ->copyable()
                     ->icon('heroicon-o-chat-bubble-left')
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('editionSection.section')
                     ->label('Section')
                     ->badge()
                     ->formatStateUsing(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->label())
                     ->color(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->color())
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('remaining_amount')
                     ->label('Montant restant')
                     ->money('XOF')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Paiement')
                     ->badge()
@@ -222,7 +227,8 @@ class RegistrationResource extends Resource
                         PaymentStatus::Partial => 'warning',
                         PaymentStatus::Paid => 'success',
                     })
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('registration_status')
                     ->label('Inscription')
                     ->badge()
@@ -232,11 +238,13 @@ class RegistrationResource extends Resource
                         RegistrationStatus::Confirmed => 'success',
                         RegistrationStatus::Cancelled => 'danger',
                     })
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('submitted_at')
                     ->label('Soumission')
                     ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('camp_edition_id')
