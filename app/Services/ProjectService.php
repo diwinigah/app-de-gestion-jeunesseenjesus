@@ -30,7 +30,6 @@ class ProjectService
     public function updateProject(Project $project, array $data): Project
     {
         $data = $this->prepareProjectData($data, $project);
-        unset($data['funded_amount']);
 
         DB::transaction(function () use ($project, $data): void {
             $project->update($data);
@@ -99,6 +98,7 @@ class ProjectService
             'summary',
             'description',
             'funding_goal',
+            'funded_amount',
             'currency',
             'status',
             'featured_image_path',

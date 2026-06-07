@@ -63,6 +63,7 @@
                     <span style="width: {{ $progress }}%"></span>
                 </div>
                 <p class="percentage">{{ number_format($progress, 2, ',', ' ') }} % finance</p>
+                <p class="label">Collecté : {{ number_format($project->funded_amount, 0, ',', ' ') }} XOF | Objectif : {{ number_format($project->funding_goal, 0, ',', ' ') }} XOF</p>
             </section>
 
             <div class="description">

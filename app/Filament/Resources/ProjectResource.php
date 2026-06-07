@@ -44,7 +44,8 @@ class ProjectResource extends Resource
                             ->directory('projects')
                             ->visibility('public')
                             ->maxSize(4096)
-                            ->imageEditor(),
+                            ->imageEditor()
+                            ->imagePreviewHeight('150'),
                     ]),
 
                 Forms\Components\Section::make('Informations')
@@ -69,9 +70,11 @@ class ProjectResource extends Resource
                             ->maxLength(500)
                             ->rows(4)
                             ->columnSpanFull(),
-                        Forms\Components\RichEditor::make('description')
-                            ->label('Description longue')
-                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Description détaillée')
+                            ->rows(8)
+                            ->columnSpanFull()
+                            ->nullable(),
                     ])
                     ->columns(2),
 
@@ -84,10 +87,11 @@ class ProjectResource extends Resource
                             ->minValue(0)
                             ->step(0.01),
                         Forms\Components\TextInput::make('funded_amount')
-                            ->label('Montant collecte')
+                            ->label('Montant collecté (F CFA)')
                             ->numeric()
-                            ->disabled()
-                            ->dehydrated(false),
+                            ->minValue(0)
+                            ->default(0)
+                            ->helperText('Mis à jour automatiquement lors des confirmations d\'investissement. Modifiable manuellement si besoin.'),
                         Forms\Components\TextInput::make('currency')
                             ->label('Devise')
                             ->required()
@@ -112,8 +116,8 @@ class ProjectResource extends Resource
                 Tables\Columns\ImageColumn::make('featured_image_path')
                     ->label('Image')
                     ->disk('public')
-                    ->square()
-                    ->size(48),
+                    ->height(60)
+                    ->width(80),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Titre')
                     ->searchable()

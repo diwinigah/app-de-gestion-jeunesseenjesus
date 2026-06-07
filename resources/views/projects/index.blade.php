@@ -73,7 +73,7 @@
                         <div class="progress" aria-label="Progression du financement">
                             <span style="width: {{ $progress }}%"></span>
                         </div>
-                        <p class="goal">Objectif : {{ number_format((float) $project->funding_goal, 0, ',', ' ') }} XOF</p>
+                        <p class="goal">Collecté : {{ number_format($project->funded_amount, 0, ',', ' ') }} XOF | Objectif : {{ number_format($project->funding_goal, 0, ',', ' ') }} XOF</p>
 
                         <div class="actions">
                             <a class="button primary" href="{{ route('projects.show', ['project' => $project->slug]) }}">Voir</a>
