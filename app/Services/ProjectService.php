@@ -56,8 +56,14 @@ class ProjectService
     public function updateFundedAmount(Project $project): void
     {
         $fundedAmount = (float) $project->projectInvestorInterests()
-            ->where('status', ProjectInvestorInterestStatus::Paid->value)
+            ->whereIn('status', [ProjectInvestorInterestStatus::Pledged->value, ProjectInvestorInterestStatus::Paid->value])
             ->sum('committed_amount');
+
+        if ($fundedAmount === 0.0) {
+            $fundedAmount = (float) $project->projectInvestorInterests()
+                ->whereIn('status', [ProjectInvestorInterestStatus::Pledged->value, ProjectInvestorInterestStatus::Paid->value])
+                ->sum('intended_amount');
+        }
 
         $status = $project->status;
 
@@ -69,10 +75,9 @@ class ProjectService
             }
         }
 
-        $project->update([
-            'funded_amount' => $fundedAmount,
-            'status' => $status,
-        ]);
+        $project->funded_amount = (string) number_format((float) $fundedAmount, 2, '.', '');
+        $project->status = $status;
+        $project->saveQuietly();
     }
 
     public function getProgressPercentage(Project $project): float

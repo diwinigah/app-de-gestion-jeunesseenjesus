@@ -68,6 +68,15 @@ class InvestorInterestsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('investorUser.organization_name')
                     ->label('Organisation')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('investorUser.email')
+                    ->label('Email')
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('investorUser.phone')
+                    ->label('Téléphone')
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('intended_amount')
                     ->label('Montant proposé')
                     ->money('XOF')
@@ -139,6 +148,40 @@ class InvestorInterestsRelationManager extends RelationManager
 
                             Notification::make()
                                 ->title('Proposition rejetée')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('record_payment')
+                        ->label('Enregistrer paiement')
+                        ->icon('heroicon-o-banknotes')
+                        ->color('success')
+                        ->visible(fn (ProjectInvestorInterest $record) => $record->status === ProjectInvestorInterestStatus::Pledged)
+                        ->form([
+                            Forms\Components\TextInput::make('committed_amount')
+                                ->label('Montant payé (F CFA)')
+                                ->numeric()
+                                ->required()
+                                ->minValue(1)
+                                ->default(fn (ProjectInvestorInterest $record) => $record->intended_amount),
+                            Forms\Components\DatePicker::make('paid_at')
+                                ->label('Date du paiement')
+                                ->required()
+                                ->default(now()),
+                            Forms\Components\Textarea::make('payment_notes')
+                                ->label('Notes')
+                                ->rows(3)
+                                ->nullable(),
+                        ])
+                        ->action(function (ProjectInvestorInterest $record, array $data): void {
+                            $record->update([
+                                'committed_amount' => $data['committed_amount'],
+                                'status' => ProjectInvestorInterestStatus::Paid,
+                            ]);
+
+                            app(ProjectService::class)->updateFundedAmount($record->project);
+
+                            Notification::make()
+                                ->title('Paiement enregistré')
                                 ->success()
                                 ->send();
                         }),
