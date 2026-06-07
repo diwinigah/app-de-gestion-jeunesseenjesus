@@ -14,7 +14,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 class CreateCampEdition extends CreateRecord
 {
@@ -124,18 +123,16 @@ class CreateCampEdition extends CreateRecord
                         SectionType::cases(),
                     ))
                     ->schema([
-                        Forms\Components\Select::make('section')
+                        Forms\Components\TextInput::make('section')
                             ->label('Section')
-                            ->options(
+                            ->required()
+                            ->datalist(
                                 collect(SectionType::cases())
-                                    ->mapWithKeys(fn ($case) => [
-                                        $case->value => $case->label()
-                                    ])
+                                    ->map(fn ($case) => $case->value)
                                     ->toArray()
                             )
-                            ->required()
-                            ->native(false)
-                            ->dehydrated(true),
+                            ->placeholder('Choisir une section')
+                            ->helperText('Sélectionnez une section existante'),
 
                         Forms\Components\TextInput::make('price')
                             ->label('Tarif (XOF)')
@@ -162,6 +159,8 @@ class CreateCampEdition extends CreateRecord
      */
     protected function handleRecordCreation(array $data): Model
     {
+        $activeEdition = null;
+        
         // Vérifier si une édition active existe déjà
         if (! empty($data['is_active']) && $data['is_active'] === true) {
             $activeEdition = CampEdition::where('is_active', true)->first();
@@ -182,14 +181,28 @@ class CreateCampEdition extends CreateRecord
 
         $sectionsData = [];
 
-        // Debugging: Log section data
-        Log::info('Section data received:', $data['sections'] ?? []);
+        // Get valid section values from enum
+        $validSectionValues = collect(SectionType::cases())
+            ->map(fn ($case) => $case->value)
+            ->toArray();
 
         // Transform sections data for createWithSections()
         if (! empty($data['sections']) && is_array($data['sections'])) {
             foreach ($data['sections'] as $section) {
-                Log::info('Processing section:', $section);
-                $sectionsData[$section['section']] = [
+                // Validate that section value is in the enum
+                $sectionValue = $section['section'] ?? null;
+                if (! in_array($sectionValue, $validSectionValues)) {
+                    Notification::make()
+                        ->title('Section invalide')
+                        ->body("La section '{$sectionValue}' n'existe pas. Utilisez une section valide.")
+                        ->danger()
+                        ->persistent()
+                        ->send();
+                    $this->halt();
+                    return new CampEdition();
+                }
+
+                $sectionsData[$sectionValue] = [
                     'price' => (float) $section['price'],
                     'description' => $section['description'] ?? null,
                 ];
