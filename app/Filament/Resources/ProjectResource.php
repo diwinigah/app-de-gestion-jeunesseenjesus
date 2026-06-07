@@ -44,7 +44,8 @@ class ProjectResource extends Resource
                             ->disk('public')
                             ->directory('projects')
                             ->visibility('public')
-                            ->maxSize(4096)
+                            ->maxSize(2048)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->imageEditor()
                             ->imagePreviewHeight('150'),
                     ]),
@@ -118,7 +119,8 @@ class ProjectResource extends Resource
                     ->label('Image')
                     ->disk('public')
                     ->height(60)
-                    ->width(80),
+                    ->width(80)
+                    ->defaultImageUrl(url('/images/placeholder.png')),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Titre')
                     ->searchable()
