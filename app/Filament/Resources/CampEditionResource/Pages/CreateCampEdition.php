@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class CreateCampEdition extends CreateRecord
 {
@@ -114,8 +115,7 @@ class CreateCampEdition extends CreateRecord
             ->schema([
                 Forms\Components\Repeater::make('sections')
                     ->label('Sections et tarifs')
-                    ->minItems(6)
-                    ->maxItems(6)
+                    ->minItems(1)
                     ->disabled(false)
                     ->default(fn (): array => array_map(
                         fn (SectionType $section): array => [
@@ -126,21 +126,26 @@ class CreateCampEdition extends CreateRecord
                     ->schema([
                         Forms\Components\Select::make('section')
                             ->label('Section')
-                            ->options(fn (): array => array_combine(
-                                array_map(fn (SectionType $s): string => $s->value, SectionType::cases()),
-                                array_map(fn (SectionType $s): string => $s->label(), SectionType::cases()),
-                            ))
+                            ->options(
+                                collect(SectionType::cases())
+                                    ->mapWithKeys(fn ($case) => [
+                                        $case->value => $case->label()
+                                    ])
+                                    ->toArray()
+                            )
                             ->required()
                             ->native(false)
-                            ->disabled(),
+                            ->dehydrated(true),
 
                         Forms\Components\TextInput::make('price')
                             ->label('Tarif (XOF)')
-                            ->placeholder('0.00')
-                            ->required()
                             ->numeric()
+                            ->required()
                             ->minValue(0)
-                            ->step(0.01),
+                            ->default(0)
+                            ->step(0.01)
+                            ->helperText('Mettre 0 pour gratuit')
+                            ->prefix('F CFA'),
 
                         Forms\Components\TextInput::make('description')
                             ->label('Description')
@@ -177,9 +182,13 @@ class CreateCampEdition extends CreateRecord
 
         $sectionsData = [];
 
+        // Debugging: Log section data
+        Log::info('Section data received:', $data['sections'] ?? []);
+
         // Transform sections data for createWithSections()
         if (! empty($data['sections']) && is_array($data['sections'])) {
             foreach ($data['sections'] as $section) {
+                Log::info('Processing section:', $section);
                 $sectionsData[$section['section']] = [
                     'price' => (float) $section['price'],
                     'description' => $section['description'] ?? null,
