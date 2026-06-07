@@ -9,8 +9,8 @@ use App\Models\Project;
 use App\Models\ProjectInvestorInterest;
 use App\Models\User;
 use App\Notifications\NewInvestmentNotification;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class InvestorService
 {

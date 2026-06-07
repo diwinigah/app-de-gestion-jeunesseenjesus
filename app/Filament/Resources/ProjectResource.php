@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\ProjectStatus;
 use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Resources\ProjectResource\RelationManagers\InvestorInterestsRelationManager;
 use App\Models\Project;
 use App\Services\ProjectService;
 use Filament\Forms;
@@ -220,6 +221,16 @@ class ProjectResource extends Resource
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getRelations(): array
+    {
+        return [
+            InvestorInterestsRelationManager::class,
         ];
     }
 }

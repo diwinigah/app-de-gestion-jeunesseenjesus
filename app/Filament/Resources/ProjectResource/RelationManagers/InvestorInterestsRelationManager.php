@@ -2,51 +2,34 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use App\Enums\ProjectInvestorInterestStatus;
-use App\Filament\Resources\InvestorInterestResource\Pages;
 use App\Models\ProjectInvestorInterest;
 use App\Services\ProjectService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class InvestorInterestResource extends Resource
+class InvestorInterestsRelationManager extends RelationManager
 {
-    protected static ?string $model = ProjectInvestorInterest::class;
+    protected static string $relationship = 'projectInvestorInterests';
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static ?string $recordTitleAttribute = 'id';
 
-    protected static ?string $navigationGroup = 'Financement';
-
-    protected static ?string $modelLabel = 'proposition d\'investissement';
-
-    protected static ?string $pluralModelLabel = 'propositions d\'investissement';
-
-    protected static ?string $navigationLabel = 'Propositions d\'investissement';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('project_id')
-                    ->label('Projet *')
-                    ->relationship('project', 'title', fn (Builder $query) => $query->where('status', 'published'))
-                    ->required()
-                    ->native(false)
-                    ->disabled(fn (string $operation) => $operation === 'edit'),
-
                 Forms\Components\Select::make('investor_user_id')
                     ->label('Investisseur *')
                     ->relationship('investorUser', 'name')
                     ->required()
-                    ->native(false)
-                    ->disabled(fn (string $operation) => $operation === 'edit'),
+                    ->native(false),
 
                 Forms\Components\TextInput::make('intended_amount')
                     ->label('Montant proposé (F CFA) *')
@@ -70,33 +53,23 @@ class InvestorInterestResource extends Resource
                     ])
                     ->default('new')
                     ->native(false),
-
-                Forms\Components\Textarea::make('admin_notes')
-                    ->label('Notes administrateur')
-                    ->rows(4)
-                    ->nullable()
-                    ->visible(fn (string $operation) => $operation === 'edit'),
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['investorUser', 'project'])->latest('created_at'))
+            ->recordTitleAttribute('id')
             ->columns([
                 Tables\Columns\TextColumn::make('investorUser.name')
-                    ->label('Investisseur')
+                    ->label('Nom investisseur')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('investorUser.organization_name')
                     ->label('Organisation')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('project.title')
-                    ->label('Projet')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('intended_amount')
-                    ->label('Montant')
+                    ->label('Montant proposé')
                     ->money('XOF')
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status')
@@ -122,9 +95,6 @@ class InvestorInterestResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('project_id')
-                    ->label('Projet')
-                    ->relationship('project', 'title'),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Statut')
                     ->options([
@@ -135,15 +105,17 @@ class InvestorInterestResource extends Resource
                         'cancelled' => 'Annulé',
                     ]),
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\EditAction::make()
-                        ->label('Modifier'),
                     Tables\Actions\Action::make('confirm')
                         ->label('Confirmer')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
+                        ->visible(fn (ProjectInvestorInterest $record) => $record->status !== ProjectInvestorInterestStatus::Pledged)
                         ->action(function (ProjectInvestorInterest $record): void {
                             $record->update(['status' => ProjectInvestorInterestStatus::Pledged]);
 
@@ -159,6 +131,7 @@ class InvestorInterestResource extends Resource
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
+                        ->visible(fn (ProjectInvestorInterest $record) => $record->status !== ProjectInvestorInterestStatus::Cancelled)
                         ->action(function (ProjectInvestorInterest $record): void {
                             $record->update(['status' => ProjectInvestorInterestStatus::Cancelled]);
 
@@ -169,24 +142,14 @@ class InvestorInterestResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+                    Tables\Actions\DeleteAction::make()
+                        ->label('Supprimer'),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->label('Supprimer'),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    /**
-     * @return array<string, array<string, string>>
-     */
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListInvestorInterests::route('/'),
-            'edit' => Pages\EditInvestorInterest::route('/{record}/edit'),
-        ];
     }
 }
