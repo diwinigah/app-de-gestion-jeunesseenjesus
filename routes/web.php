@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PublicRegistrationListController;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,9 @@ Route::get('/camp/confirmation', [RegistrationController::class, 'confirmation']
 
 Route::get('/inscrits', [PublicRegistrationListController::class, 'index'])
     ->name('public.registrations.index');
+
+Route::get('/projets', [ProjectController::class, 'index'])
+    ->name('projects.index');
+
+Route::get('/projets/{project:slug}', [ProjectController::class, 'show'])
+    ->name('projects.show');

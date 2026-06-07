@@ -46,8 +46,7 @@ class InscriptionsParSectionWidget extends BaseWidget
 
                 Tables\Columns\TextColumn::make('registrations_count')
                     ->label('Nombre d\'inscrits')
-                    ->getStateUsing(fn (EditionSection $record) => $record->registrations->count())
-                    ->sortable(),
+                    ->getStateUsing(fn (EditionSection $record) => $record->registrations->count()),
 
                 Tables\Columns\TextColumn::make('total_paid')
                     ->label('Montant collecté')

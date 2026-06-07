@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ProjectInvestorInterestStatus;
+use App\Services\ProjectService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,17 @@ class ProjectInvestorInterest extends Model
         'committed_amount' => 'decimal:2',
         'status' => ProjectInvestorInterestStatus::class,
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function (ProjectInvestorInterest $interest): void {
+            app(ProjectService::class)->updateFundedAmount($interest->project);
+        });
+
+        static::deleted(function (ProjectInvestorInterest $interest): void {
+            app(ProjectService::class)->updateFundedAmount($interest->project);
+        });
+    }
 
     public function project(): BelongsTo
     {

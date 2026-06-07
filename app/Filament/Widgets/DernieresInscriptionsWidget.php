@@ -51,8 +51,9 @@ class DernieresInscriptionsWidget extends BaseWidget
                     ->formatStateUsing(fn ($state) => $state->label())
                     ->color(fn ($state) => $state->color()),
 
-                Tables\Columns\BadgeColumn::make('payment_status')
+                Tables\Columns\TextColumn::make('payment_status')
                     ->label('Paiement')
+                    ->badge()
                     ->formatStateUsing(fn ($state) => match ($state) {
                         PaymentStatus::Unpaid => 'Non payé',
                         PaymentStatus::Partial => 'Partiel',

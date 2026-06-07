@@ -19,6 +19,7 @@ use App\Services\RegistrationPaymentService;
 use App\Services\RegistrationService;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Forms;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -85,7 +86,7 @@ class RegistrationResource extends Resource
                             ->live(),
                         Forms\Components\Select::make('edition_section_id')
                             ->label('Section')
-                            ->options(fn (Forms\Get $get): array => self::getEditionSectionOptions((int) $get('camp_edition_id')))
+                            ->options(fn (Get $get): array => self::getEditionSectionOptions((int) $get('camp_edition_id')))
                             ->required()
                             ->native(false),
                         Forms\Components\TextInput::make('registration_number')
