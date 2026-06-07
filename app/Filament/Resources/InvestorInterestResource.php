@@ -6,10 +6,12 @@ namespace App\Filament\Resources;
 
 use App\Enums\ProjectInvestorInterestStatus;
 use App\Filament\Resources\InvestorInterestResource\Pages;
+use App\Models\InvestorUser;
 use App\Models\ProjectInvestorInterest;
 use App\Services\ProjectService;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -34,48 +36,85 @@ class InvestorInterestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('project_id')
-                    ->label('Projet *')
-                    ->relationship('project', 'title', fn (Builder $query) => $query->where('status', 'published'))
-                    ->required()
-                    ->native(false)
-                    ->disabled(fn (string $operation) => $operation === 'edit'),
+                Forms\Components\Section::make('Investisseur')
+                    ->schema([
+                        Forms\Components\Toggle::make('has_account')
+                            ->label('Investisseur avec compte')
+                            ->default(fn (?ProjectInvestorInterest $record) => $record?->investor_user_id !== null)
+                            ->live(),
 
-                Forms\Components\Select::make('investor_user_id')
-                    ->label('Investisseur *')
-                    ->relationship('investorUser', 'name')
-                    ->required()
-                    ->native(false)
-                    ->disabled(fn (string $operation) => $operation === 'edit'),
+                        Forms\Components\Select::make('investor_user_id')
+                            ->label('Choisir l\'investisseur')
+                            ->options(InvestorUser::pluck('name', 'id'))
+                            ->searchable()
+                            ->required()
+                            ->hidden(fn (Get $get) => !$get('has_account'))
+                            ->disabled(fn (string $operation) => $operation === 'edit'),
 
-                Forms\Components\TextInput::make('intended_amount')
-                    ->label('Montant proposé (F CFA) *')
-                    ->numeric()
-                    ->required()
-                    ->minValue(1),
+                        Forms\Components\TextInput::make('manual_name')
+                            ->label('Nom complet')
+                            ->required()
+                            ->hidden(fn (Get $get) => $get('has_account'))
+                            ->disabled(fn (string $operation) => $operation === 'edit'),
 
-                Forms\Components\Textarea::make('message')
-                    ->label('Message')
-                    ->rows(3)
-                    ->nullable(),
+                        Forms\Components\TextInput::make('manual_organisation')
+                            ->label('Organisation')
+                            ->nullable()
+                            ->hidden(fn (Get $get) => $get('has_account'))
+                            ->disabled(fn (string $operation) => $operation === 'edit'),
 
-                Forms\Components\Select::make('status')
-                    ->label('Statut')
-                    ->options([
-                        'new' => 'Nouvelle',
-                        'contacted' => 'Contacté',
-                        'pledged' => 'Engagé',
-                        'paid' => 'Payé',
-                        'cancelled' => 'Annulé',
-                    ])
-                    ->default('new')
-                    ->native(false),
+                        Forms\Components\TextInput::make('manual_email')
+                            ->label('Email')
+                            ->email()
+                            ->nullable()
+                            ->hidden(fn (Get $get) => $get('has_account'))
+                            ->disabled(fn (string $operation) => $operation === 'edit'),
 
-                Forms\Components\Textarea::make('admin_notes')
-                    ->label('Notes administrateur')
-                    ->rows(4)
-                    ->nullable()
-                    ->visible(fn (string $operation) => $operation === 'edit'),
+                        Forms\Components\TextInput::make('manual_phone')
+                            ->label('Téléphone')
+                            ->nullable()
+                            ->hidden(fn (Get $get) => $get('has_account'))
+                            ->disabled(fn (string $operation) => $operation === 'edit'),
+                    ]),
+
+                Forms\Components\Section::make('Proposition')
+                    ->schema([
+                        Forms\Components\Select::make('project_id')
+                            ->label('Projet *')
+                            ->relationship('project', 'title', fn (Builder $query) => $query->where('status', 'published'))
+                            ->required()
+                            ->native(false)
+                            ->disabled(fn (string $operation) => $operation === 'edit'),
+
+                        Forms\Components\TextInput::make('intended_amount')
+                            ->label('Montant proposé (F CFA) *')
+                            ->numeric()
+                            ->required()
+                            ->minValue(1),
+
+                        Forms\Components\Textarea::make('message')
+                            ->label('Message')
+                            ->rows(3)
+                            ->nullable(),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Statut')
+                            ->options([
+                                'new' => 'Nouvelle',
+                                'contacted' => 'Contacté',
+                                'pledged' => 'Engagé',
+                                'paid' => 'Payé',
+                                'cancelled' => 'Annulé',
+                            ])
+                            ->default('new')
+                            ->native(false),
+
+                        Forms\Components\Textarea::make('admin_notes')
+                            ->label('Notes administrateur')
+                            ->rows(4)
+                            ->nullable()
+                            ->visible(fn (string $operation) => $operation === 'edit'),
+                    ]),
             ]);
     }
 
@@ -84,19 +123,26 @@ class InvestorInterestResource extends Resource
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['investorUser', 'project'])->latest('created_at'))
             ->columns([
-                Tables\Columns\TextColumn::make('investorUser.name')
+                Tables\Columns\TextColumn::make('investor_name')
                     ->label('Investisseur')
-                    ->searchable()
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            return $query
+                                ->whereHas('investorUser',
+                                    fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                                ->orWhere('manual_name', 'like', "%{$search}%");
+                        }
+                    )
                     ->sortable(),
                 Tables\Columns\TextColumn::make('investorUser.organization_name')
                     ->label('Organisation')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('investorUser.email')
+                Tables\Columns\TextColumn::make('investor_email')
                     ->label('Email')
                     ->searchable()
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('investorUser.phone')
+                Tables\Columns\TextColumn::make('investor_phone')
                     ->label('Téléphone')
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: false),
