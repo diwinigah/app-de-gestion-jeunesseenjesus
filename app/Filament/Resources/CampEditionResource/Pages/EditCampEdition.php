@@ -39,4 +39,9 @@ class EditCampEdition extends EditRecord
     {
         return 'Edition mise a jour';
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

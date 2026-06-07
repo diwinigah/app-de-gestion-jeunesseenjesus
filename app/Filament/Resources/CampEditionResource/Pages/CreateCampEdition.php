@@ -9,6 +9,7 @@ use App\Filament\Resources\CampEditionResource;
 use App\Models\CampEdition;
 use App\Services\CampEditionService;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -118,13 +119,12 @@ class CreateCampEdition extends CreateRecord
                     ->disabled(false)
                     ->default(fn (): array => array_map(
                         fn (SectionType $section): array => [
-                            'section_enum' => $section->value,
-                            'section_label' => $section->label(),
+                            'section' => $section->value,
                         ],
                         SectionType::cases(),
                     ))
                     ->schema([
-                        Forms\Components\Select::make('section_enum')
+                        Forms\Components\Select::make('section')
                             ->label('Section')
                             ->options(fn (): array => array_combine(
                                 array_map(fn (SectionType $s): string => $s->value, SectionType::cases()),
@@ -157,12 +157,30 @@ class CreateCampEdition extends CreateRecord
      */
     protected function handleRecordCreation(array $data): Model
     {
+        // Vérifier si une édition active existe déjà
+        if (! empty($data['is_active']) && $data['is_active'] === true) {
+            $activeEdition = CampEdition::where('is_active', true)->first();
+
+            if ($activeEdition) {
+                Notification::make()
+                    ->title('Édition active existante')
+                    ->body('L\'édition "' . $activeEdition->name . '" est déjà active. Désactivez-la avant d\'en créer une nouvelle active.')
+                    ->danger()
+                    ->persistent()
+                    ->send();
+
+                $this->halt();
+
+                return $activeEdition;
+            }
+        }
+
         $sectionsData = [];
 
         // Transform sections data for createWithSections()
         if (! empty($data['sections']) && is_array($data['sections'])) {
             foreach ($data['sections'] as $section) {
-                $sectionsData[$section['section_enum']] = [
+                $sectionsData[$section['section']] = [
                     'price' => (float) $section['price'],
                     'description' => $section['description'] ?? null,
                 ];

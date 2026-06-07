@@ -27,4 +27,9 @@ class EditRegistration extends EditRecord
     {
         return 'Inscription mise a jour';
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

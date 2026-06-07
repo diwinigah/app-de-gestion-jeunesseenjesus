@@ -39,4 +39,9 @@ class EditProject extends EditRecord
     {
         return 'Projet mis a jour';
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
