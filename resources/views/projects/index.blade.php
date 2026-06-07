@@ -36,6 +36,8 @@
     </style>
 </head>
 <body>
+<x-investor-navbar />
+
 <main>
     <header>
         <div class="eyebrow">Jeunesse en Jesus</div>
@@ -77,7 +79,7 @@
 
                         <div class="actions">
                             <a class="button primary" href="{{ route('projects.show', ['project' => $project->slug]) }}">Voir</a>
-                            <a class="button secondary" href="/projets/{{ $project->slug }}/investir">Investir</a>
+                            <a class="button secondary" href="{{ route('projects.invest.form', ['project' => $project->slug]) }}">Investir</a>
                         </div>
                     </div>
                 </article>

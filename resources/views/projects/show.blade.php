@@ -34,6 +34,10 @@
     $progress = $projectService->getProgressPercentage($project);
 @endphp
 
+</head>
+<body>
+<x-investor-navbar />
+
 <main>
     <a href="{{ route('projects.index') }}">Retour aux projets</a>
 
@@ -70,7 +74,7 @@
                 {!! $project->description !!}
             </div>
 
-            <a class="invest" href="/projets/{{ $project->slug }}/investir">Investir</a>
+            <a class="invest" href="{{ route('projects.invest.form', ['project' => $project->slug]) }}">Investir</a>
         </div>
     </article>
 </main>
