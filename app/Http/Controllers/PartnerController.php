@@ -18,7 +18,7 @@ class PartnerController extends Controller
         $partners = Partner::query()
             ->active()
             ->public()
-            ->select(['id', 'name', 'slug', 'type', 'logo_path', 'website_url', 'display_order'])
+            ->select(['id', 'name', 'slug', 'type', 'logo_path', 'description', 'website_url', 'display_order'])
             ->orderBy('display_order', 'asc')
             ->get();
 

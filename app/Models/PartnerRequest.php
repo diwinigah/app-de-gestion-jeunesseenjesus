@@ -33,9 +33,7 @@ class PartnerRequest extends Model
     /**
      * @var list<string>
      */
-    protected $hidden = [
-        'phone',
-    ];
+    protected $hidden = [];
 
     /**
      * @var array<string, string>

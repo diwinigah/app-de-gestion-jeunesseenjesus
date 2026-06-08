@@ -12,6 +12,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Partner extends Model
 {
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::deleting(function (self $partner): void {
+            // Supprimer toutes les demandes de partenariat converties
+            $partner->partnerRequests()->delete();
+        });
+    }
+
     /**
      * @var list<string>
      */

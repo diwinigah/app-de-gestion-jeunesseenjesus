@@ -62,7 +62,8 @@ class PartnerRequestResource extends Resource
                         TextInput::make('phone')
                             ->label('Téléphone')
                             ->tel()
-                            ->required(),
+                            ->required()
+                            ->maxLength(50),
 
                         Select::make('type')
                             ->label('Type')

@@ -86,6 +86,7 @@ class PartnerService
                 'slug' => Str::slug($request->organization_name),
                 'type' => $request->type,
                 'description' => $request->message ?? null,
+                'logo_path' => $request->logo_path,
                 'email' => $request->email ?? null,
                 'phone' => $request->phone,
                 'website_url' => $request->website_url ?? null,
