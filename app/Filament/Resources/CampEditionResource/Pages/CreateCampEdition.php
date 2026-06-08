@@ -9,6 +9,8 @@ use App\Filament\Resources\CampEditionResource;
 use App\Models\CampEdition;
 use App\Services\CampEditionService;
 use Filament\Forms;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -112,16 +114,35 @@ class CreateCampEdition extends CreateRecord
         return Forms\Components\Wizard\Step::make('Sections et tarifs')
             ->description('Definir les tarifs pour chaque section')
             ->schema([
+                Toggle::make('copy_previous_sections')
+                    ->label('Conserver les sections de l\'édition précédente')
+                    ->helperText('Activez pour pré-remplir les sections avec la dernière édition. Vous pourrez les modifier.')
+                    ->default(false)
+                    ->live()
+                    ->afterStateUpdated(function ($state, Set $set): void {
+                        if ($state) {
+                            $lastEdition = CampEdition::latest()
+                                ->with('editionSections')
+                                ->first();
+                            if ($lastEdition && $lastEdition->editionSections->isNotEmpty()) {
+                                $sections = $lastEdition->editionSections
+                                    ->map(fn ($s) => [
+                                        'section' => $s->section instanceof \BackedEnum ? $s->section->value : $s->section,
+                                        'price' => $s->price,
+                                        'description' => $s->description,
+                                    ])->toArray();
+                                $set('sections', $sections);
+                            }
+                        } else {
+                            $set('sections', []);
+                        }
+                    }),
+
                 Forms\Components\Repeater::make('sections')
                     ->label('Sections et tarifs')
-                    ->minItems(1)
+                    ->minItems(0)
+                    ->defaultItems(0)
                     ->disabled(false)
-                    ->default(fn (): array => array_map(
-                        fn (SectionType $section): array => [
-                            'section' => $section->value,
-                        ],
-                        SectionType::cases(),
-                    ))
                     ->schema([
                         Forms\Components\TextInput::make('section')
                             ->label('Section')
@@ -160,6 +181,9 @@ class CreateCampEdition extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $activeEdition = null;
+        
+        // Remove copy_previous_sections field (virtual, not saved to DB)
+        unset($data['copy_previous_sections']);
         
         // Vérifier si une édition active existe déjà
         if (! empty($data['is_active']) && $data['is_active'] === true) {
@@ -211,6 +235,18 @@ class CreateCampEdition extends CreateRecord
 
         // Remove sections from data before passing to service
         unset($data['sections']);
+
+        // Handle empty sections - require at least one
+        if (empty($sectionsData)) {
+            Notification::make()
+                ->title('Aucune section')
+                ->body('Vous devez ajouter au moins une section avec un tarif.')
+                ->danger()
+                ->persistent()
+                ->send();
+            $this->halt();
+            return new CampEdition();
+        }
 
         // Set currency to XOF (default)
         $data['currency'] = 'XOF';

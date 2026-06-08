@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Investor\InvestorAuthController;
 use App\Http\Controllers\Investor\InvestorController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PublicRegistrationListController;
@@ -30,6 +31,20 @@ Route::get('/projets', [ProjectController::class, 'index'])
 
 Route::get('/projets/{project:slug}', [ProjectController::class, 'show'])
     ->name('projects.show');
+
+// Partenaires publics
+Route::get('/partenaires', [PartnerController::class, 'index'])
+    ->name('partners.index');
+
+Route::get('/partenaires/demande', [PartnerController::class, 'showRequestForm'])
+    ->name('partners.request');
+
+Route::post('/partenaires/demande', [PartnerController::class, 'storeRequest'])
+    ->middleware('throttle:5,1')
+    ->name('partners.store');
+
+Route::get('/partenaires/confirmation', [PartnerController::class, 'confirmation'])
+    ->name('partners.confirmation');
 
 // Investisseur - Authentification
 Route::prefix('investisseur')->group(function (): void {
