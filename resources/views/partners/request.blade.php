@@ -36,7 +36,6 @@
     </style>
 </head>
 <body>
-<x-investor-navbar />
 
 <main>
     <header>

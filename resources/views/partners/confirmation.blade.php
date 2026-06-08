@@ -23,7 +23,6 @@
     </style>
 </head>
 <body>
-<x-investor-navbar />
 
 <main>
     <section class="success-box">

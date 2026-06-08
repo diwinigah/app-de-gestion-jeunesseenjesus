@@ -31,7 +31,7 @@ class PartnerResource extends Resource
 
     protected static ?string $slug = 'partners';
 
-    protected static ?string $navigationIcon = 'heroicon-o-handshake';
+    protected static ?string $navigationIcon = 'heroicon-o-heart';
 
     protected static ?string $navigationLabel = 'Partenaires';
 
@@ -147,12 +147,21 @@ class PartnerResource extends Resource
 
                 TextColumn::make('type')
                     ->label('Type')
-                    ->formatStateUsing(fn ($state) => $state?->label() ?? '-')
-                    ->badge(),
+                    ->badge()
+                    ->formatStateUsing(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerType
+                            ? $state->label()
+                            : ($state ?? '—')
+                    )
+                    ->color(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerType
+                            ? $state->color()
+                            : 'gray'
+                    ),
 
                 TextColumn::make('website_url')
                     ->label('Site web')
-                    ->url()
+                    ->url(fn ($record) => $record->website_url)
                     ->openUrlInNewTab()
                     ->limit(30),
 
@@ -163,13 +172,17 @@ class PartnerResource extends Resource
 
                 TextColumn::make('status')
                     ->label('Statut')
-                    ->formatStateUsing(fn ($state) => $state->label())
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
-                        PartnerStatus::Active => 'success',
-                        PartnerStatus::Inactive => 'warning',
-                        PartnerStatus::Archived => 'gray',
-                    })
+                    ->formatStateUsing(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerStatus
+                            ? $state->label()
+                            : ($state ?? '—')
+                    )
+                    ->color(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerStatus
+                            ? $state->color()
+                            : 'gray'
+                    )
                     ->sortable(),
 
                 TextColumn::make('display_order')

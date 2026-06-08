@@ -58,12 +58,15 @@ class PartnerRequestResource extends Resource
                         TextInput::make('phone')
                             ->label('Téléphone')
                             ->tel()
-                            ->disabled()
-                            ->copyable(),
+                            ->disabled(),
 
                         TextInput::make('type')
                             ->label('Type')
-                            ->formatStateUsing(fn ($state) => $state?->label() ?? '-')
+                            ->formatStateUsing(fn ($state) =>
+                                $state instanceof \App\Enums\PartnerType
+                                    ? $state->label()
+                                    : ($state ?? '—')
+                            )
                             ->disabled(),
 
                         TextInput::make('website_url')
@@ -89,7 +92,11 @@ class PartnerRequestResource extends Resource
 
                         TextInput::make('status')
                             ->label('Statut')
-                            ->formatStateUsing(fn ($state) => $state->label())
+                            ->formatStateUsing(fn ($state) =>
+                                $state instanceof \App\Enums\PartnerRequestStatus
+                                    ? $state->label()
+                                    : ($state ?? '—')
+                            )
                             ->disabled(),
                     ]),
             ]);
@@ -121,19 +128,31 @@ class PartnerRequestResource extends Resource
 
                 TextColumn::make('type')
                     ->label('Type')
-                    ->formatStateUsing(fn ($state) => $state?->label() ?? '-')
-                    ->badge(),
+                    ->badge()
+                    ->formatStateUsing(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerType
+                            ? $state->label()
+                            : ($state ?? '—')
+                    )
+                    ->color(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerType
+                            ? $state->color()
+                            : 'gray'
+                    ),
 
                 TextColumn::make('status')
                     ->label('Statut')
-                    ->formatStateUsing(fn ($state) => $state->label())
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
-                        PartnerRequestStatus::New => 'gray',
-                        PartnerRequestStatus::Reviewed => 'info',
-                        PartnerRequestStatus::Accepted => 'success',
-                        PartnerRequestStatus::Rejected => 'danger',
-                    })
+                    ->formatStateUsing(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerRequestStatus
+                            ? $state->label()
+                            : ($state ?? '—')
+                    )
+                    ->color(fn ($state) =>
+                        $state instanceof \App\Enums\PartnerRequestStatus
+                            ? $state->color()
+                            : 'gray'
+                    )
                     ->sortable(),
 
                 TextColumn::make('submitted_at')
