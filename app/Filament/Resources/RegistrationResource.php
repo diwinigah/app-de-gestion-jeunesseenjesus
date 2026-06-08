@@ -265,12 +265,6 @@ class RegistrationResource extends Resource
                     ->relationship('editionSection', 'section')
                     ->getOptionLabelFromRecordUsing(fn (EditionSection $record): string => $record->section->label()),
             ])
-            ->headerActions([
-                Tables\Actions\ExportAction::make()
-                    ->label('Exporter Excel')
-                    ->exporter(RegistrationExporter::class)
-                    ->formats([ExportFormat::Xlsx]),
-            ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\Action::make('confirm')

@@ -44,16 +44,30 @@ class NewRegistrationNotification extends Notification implements ShouldQueue
     /**
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         $registration = $this->registration->loadMissing(['campEdition', 'editionSection']);
 
         return [
-            'registration_id' => $registration->getKey(),
-            'registration_number' => $registration->registration_number,
-            'participant_name' => $registration->first_name . ' ' . $registration->last_name,
-            'camp_edition' => $registration->campEdition->name,
-            'section' => $registration->editionSection->section->value,
+            'title' => 'Nouvelle inscription',
+            'body' => $registration->first_name . ' ' . $registration->last_name,
+            'icon' => 'heroicon-o-user-plus',
+            'iconColor' => 'success',
+            'actions' => [
+                [
+                    'name' => 'view',
+                    'label' => 'Voir l\'inscription',
+                    'url' => '/admin/registrations/' . $registration->id . '/edit',
+                ],
+            ],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return $this->toDatabase($notifiable);
     }
 }

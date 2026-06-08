@@ -6,6 +6,8 @@ namespace App\Filament\Resources\RegistrationResource\Pages;
 
 use App\Filament\Resources\RegistrationResource;
 use Filament\Actions;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\RegistrationExporter;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRegistrations extends ListRecords
@@ -20,6 +22,11 @@ class ListRegistrations extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Nouvelle inscription'),
+            ExportAction::make()
+                ->label('Exporter Excel')
+                ->exporter(RegistrationExporter::class)
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('success'),
         ];
     }
 }

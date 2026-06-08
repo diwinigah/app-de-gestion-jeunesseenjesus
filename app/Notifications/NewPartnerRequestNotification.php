@@ -27,7 +27,7 @@ class NewPartnerRequestNotification extends Notification implements ShouldQueue
      *
      * @return array<int, string>
      */
-    public function via(): array
+    public function via(object $notifiable): array
     {
         return ['mail', 'database'];
     }
@@ -35,7 +35,7 @@ class NewPartnerRequestNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(): MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
             ->subject('Nouvelle demande de partenariat')
@@ -54,22 +54,25 @@ class NewPartnerRequestNotification extends Notification implements ShouldQueue
      *
      * @return array<string, mixed>
      */
-    public function toDatabase(): array
+    public function toDatabase(object $notifiable): array
     {
         return [
-            'request_id' => $this->request->id,
-            'contact_name' => $this->request->contact_name,
-            'organization_name' => $this->request->organization_name,
-            'phone' => $this->request->phone,
-            'email' => $this->request->email,
-            'message' => $this->request->message,
             'title' => 'Nouvelle demande de partenariat',
-            'body' => 'De ' . $this->request->organization_name . ' - ' . $this->request->contact_name,
+            'body' => $this->request->organization_name . ' - ' . $this->request->contact_name,
+            'icon' => 'heroicon-o-handshake',
+            'iconColor' => 'warning',
+            'actions' => [
+                [
+                    'name' => 'view',
+                    'label' => 'Voir la demande',
+                    'url' => '/admin/partner-requests/' . $this->request->id . '/edit',
+                ],
+            ],
         ];
     }
 
-    public function toArray(): array
+    public function toArray(object $notifiable): array
     {
-        return $this->toDatabase();
+        return $this->toDatabase($notifiable);
     }
 }

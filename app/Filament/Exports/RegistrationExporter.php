@@ -29,6 +29,10 @@ class RegistrationExporter extends Exporter
                 ->label('Nom'),
             ExportColumn::make('city')
                 ->label('Ville'),
+            ExportColumn::make('phone')
+                ->label('Téléphone'),
+            ExportColumn::make('whatsapp_phone')
+                ->label('WhatsApp'),
             ExportColumn::make('campEdition.name')
                 ->label('Edition'),
             ExportColumn::make('editionSection.section')

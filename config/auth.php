@@ -109,6 +109,12 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'investors' => [
+            'provider' => 'investor_users',
+            'table' => 'investor_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
     ],
 
     /*

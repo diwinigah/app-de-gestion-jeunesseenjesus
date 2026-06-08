@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Se connecter - Investisseur</title>
+    <title>Réinitialiser le mot de passe - Investisseur</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; font-family: Arial, sans-serif; background: #f6f7f9; color: #172033; }
@@ -28,10 +28,20 @@
 
 <main>
     <div class="form-container">
-        <h1>Se connecter</h1>
+        <h1>Réinitialiser le mot de passe</h1>
 
-        <form method="POST" action="{{ route('investor.login') }}">
+        @if ($errors->any())
+            <div class="error-message">
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('investor.password.update') }}">
             @csrf
+
+            <input type="hidden" name="token" value="{{ $token }}">
 
             <div class="form-group @error('email') error @enderror">
                 <label for="email">Email *</label>
@@ -42,19 +52,26 @@
             </div>
 
             <div class="form-group @error('password') error @enderror">
-                <label for="password">Mot de passe *</label>
+                <label for="password">Nouveau mot de passe *</label>
                 <input type="password" name="password" id="password" required>
                 @error('password')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
 
-            <button type="submit" class="button">Se connecter</button>
+            <div class="form-group @error('password_confirmation') error @enderror">
+                <label for="password_confirmation">Confirmer le mot de passe *</label>
+                <input type="password" name="password_confirmation" id="password_confirmation" required>
+                @error('password_confirmation')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <button type="submit" class="button">Réinitialiser le mot de passe</button>
         </form>
 
         <div class="link">
-            <div>Pas encore inscrit ? <a href="{{ route('investor.register') }}">S'inscrire</a></div>
-            <div style="margin-top: 8px;"><a href="{{ route('investor.password.request') }}">Mot de passe oublié ?</a></div>
+            <a href="{{ route('investor.login') }}">Retour à la connexion</a>
         </div>
     </div>
 </main>

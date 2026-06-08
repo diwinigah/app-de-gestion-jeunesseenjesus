@@ -47,14 +47,28 @@ class NewInvestmentNotification extends Notification implements ShouldQueue
     /**
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return [
-            'investor_name' => $this->investor->name,
-            'investor_organization' => $this->investor->organization_name,
-            'project_title' => $this->project->title,
-            'amount' => $this->amount,
-            'type' => 'new_investment',
+            'title' => 'Nouvelle proposition d\'investissement',
+            'body' => $this->investor->name . ' - ' . $this->project->title,
+            'icon' => 'heroicon-o-banknotes',
+            'iconColor' => 'info',
+            'actions' => [
+                [
+                    'name' => 'view',
+                    'label' => 'Voir la proposition',
+                    'url' => '/admin/resources/investor-interests',
+                ],
+            ],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return $this->toDatabase($notifiable);
     }
 }
