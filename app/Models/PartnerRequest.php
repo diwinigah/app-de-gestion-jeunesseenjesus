@@ -22,6 +22,7 @@ class PartnerRequest extends Model
         'phone',
         'type',
         'website_url',
+        'logo_path',
         'message',
         'status',
         'converted_partner_id',

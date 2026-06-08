@@ -8,7 +8,9 @@ use App\Enums\PartnerRequestStatus;
 use App\Filament\Resources\PartnerRequestResource\Pages;
 use App\Models\PartnerRequest;
 use App\Services\PartnerService;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -44,44 +46,65 @@ class PartnerRequestResource extends Resource
                     ->schema([
                         TextInput::make('contact_name')
                             ->label('Nom du contact')
-                            ->disabled(),
+                            ->required()
+                            ->maxLength(255),
 
                         TextInput::make('organization_name')
                             ->label('Nom de l\'organisation')
-                            ->disabled(),
+                            ->required()
+                            ->maxLength(255),
 
                         TextInput::make('email')
                             ->label('Email')
                             ->email()
-                            ->disabled(),
+                            ->required(),
 
                         TextInput::make('phone')
                             ->label('Téléphone')
                             ->tel()
-                            ->disabled(),
+                            ->required(),
 
-                        TextInput::make('type')
+                        Select::make('type')
                             ->label('Type')
-                            ->formatStateUsing(fn ($state) =>
-                                $state instanceof \App\Enums\PartnerType
-                                    ? $state->label()
-                                    : ($state ?? '—')
-                            )
-                            ->disabled(),
+                            ->options([
+                                'church' => 'Église',
+                                'company' => 'Entreprise',
+                                'association' => 'Association',
+                                'individual' => 'Individu',
+                                'other' => 'Autre',
+                            ])
+                            ->required(),
 
                         TextInput::make('website_url')
                             ->label('Site web')
                             ->url()
-                            ->disabled(),
+                            ->maxLength(500),
                     ])
                     ->columns(2),
+
+                Section::make('Visuel')
+                    ->schema([
+                        FileUpload::make('logo_path')
+                            ->label('Logo / Photo')
+                            ->disk('public')
+                            ->directory('partners/requests')
+                            ->image()
+                            ->imagePreviewHeight('150')
+                            ->maxSize(2048)
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/webp'
+                            ])
+                            ->nullable(),
+                    ]),
 
                 Section::make('Message')
                     ->schema([
                         Textarea::make('message')
                             ->label('Message')
-                            ->disabled()
-                            ->rows(4),
+                            ->rows(4)
+                            ->maxLength(5000),
                     ]),
 
                 Section::make('Administration')
@@ -90,14 +113,17 @@ class PartnerRequestResource extends Resource
                             ->label('Notes internes')
                             ->rows(4),
 
-                        TextInput::make('status')
+                        Select::make('status')
                             ->label('Statut')
-                            ->formatStateUsing(fn ($state) =>
-                                $state instanceof \App\Enums\PartnerRequestStatus
-                                    ? $state->label()
-                                    : ($state ?? '—')
+                            ->options(
+                                collect(
+                                    \App\Enums\PartnerRequestStatus::cases()
+                                )
+                                ->mapWithKeys(fn ($case) => [
+                                    $case->value => $case->label()
+                                ])->toArray()
                             )
-                            ->disabled(),
+                            ->required(),
                     ]),
             ]);
     }
@@ -119,7 +145,8 @@ class PartnerRequestResource extends Resource
                 TextColumn::make('phone')
                     ->label('Téléphone')
                     ->copyable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('email')
                     ->label('Email')
