@@ -29,7 +29,7 @@
 <body>
 <main>
     <header>
-        <h1>Inscription au camp</h1>
+        <h1>Inscription Evenement</h1>
         <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>
     </header>
 

@@ -16,7 +16,7 @@
 <body>
 <main>
     <section>
-        <h1>Inscription recue</h1>
+        <h1>Inscription reçue</h1>
         <p>Merci. Votre demande a bien ete envoyee.</p>
         <p>Numero d'inscription : <strong>{{ $registration }}</strong></p>
     </section>

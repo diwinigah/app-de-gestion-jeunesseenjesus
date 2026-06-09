@@ -42,13 +42,13 @@
     <header>
         <div class="eyebrow">Jeunesse en Jesus</div>
         <h1>Projets a financer</h1>
-        <p class="lead">Decouvrez les projets publies et accompagnez ceux qui construisent l'avenir de l'organisation.</p>
+        <p class="lead">Decouvrez les projets publies et accompagnez ceux qui construisent l'avenir de Jeunesse en Jésus .</p>
     </header>
 
     @if ($projects->isEmpty())
         <section class="empty">
             <h2>Aucun projet publie</h2>
-            <p>Les projets a financer seront affiches ici des leur publication.</p>
+            <p>Les projets à financer seront affiches ici des leur publication.</p>
         </section>
     @else
         <section class="grid">
