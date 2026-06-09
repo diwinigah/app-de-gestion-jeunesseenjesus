@@ -33,7 +33,7 @@
         <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>
     </header>
 
-    @if ($errors->any())
+    @if ($errors->any() && session('_old_input'))
         <div class="alert">Merci de corriger les champs indiques.</div>
     @endif
 
@@ -44,13 +44,13 @@
             <div>
                 <label for="first_name">Prenom</label>
                 <input id="first_name" name="first_name" value="{{ old('first_name') }}" required autocomplete="given-name">
-                @error('first_name') <div class="error">{{ $message }}</div> @enderror
+                @if ($errors->has('first_name') && session('_old_input')) <div class="error">{{ $errors->first('first_name') }}</div> @endif
             </div>
 
             <div>
                 <label for="last_name">Nom</label>
                 <input id="last_name" name="last_name" value="{{ old('last_name') }}" required autocomplete="family-name">
-                @error('last_name') <div class="error">{{ $message }}</div> @enderror
+                @if ($errors->has('last_name') && session('_old_input')) <div class="error">{{ $errors->first('last_name') }}</div> @endif
             </div>
         </div>
 
@@ -63,7 +63,7 @@
                     <option value="female" @selected(old('gender') === 'female')>Femme</option>
                     <option value="other" @selected(old('gender') === 'other')>Autre</option>
                 </select>
-                @error('gender') <div class="error">{{ $message }}</div> @enderror
+                @if ($errors->has('gender') && session('_old_input')) <div class="error">{{ $errors->first('gender') }}</div> @endif
             </div>
 
             <div>
@@ -76,7 +76,7 @@
                         </option>
                     @endforeach
                 </select>
-                @error('edition_section_id') <div class="error">{{ $message }}</div> @enderror
+                @if ($errors->has('edition_section_id') && session('_old_input')) <div class="error">{{ $errors->first('edition_section_id') }}</div> @endif
             </div>
         </div>
 
@@ -84,7 +84,7 @@
             <div>
                 <label for="phone">Telephone</label>
                 <input id="phone" name="phone" type="tel" inputmode="tel" pattern="[\+0-9\s\-\(\)]{7,20}" value="{{ old('phone') }}" required autocomplete="tel">
-                @error('phone') <div class="error">{{ $message }}</div> @enderror
+                @if ($errors->has('phone') && session('_old_input')) <div class="error">{{ $errors->first('phone') }}</div> @endif
                 <p class="form-note">
                     📞 Indicatif international accepté (ex: +228, +33).<br>
                     <strong>NB :</strong> Numéro valide exigé pour
@@ -96,18 +96,25 @@
                 <label for="whatsapp_phone">WhatsApp</label>
                 <input id="whatsapp_phone" name="whatsapp_phone" type="tel" inputmode="tel" pattern="[\+0-9\s\-\(\)]{7,20}" value="{{ old('whatsapp_phone') }}" autocomplete="tel">
                 <div class="hint">Facultatif.</div>
-                @error('whatsapp_phone') <div class="error">{{ $message }}</div> @enderror
+                @if ($errors->has('whatsapp_phone') && session('_old_input')) <div class="error">{{ $errors->first('whatsapp_phone') }}</div> @endif
             </div>
         </div>
 
         <div style="margin-top:16px">
             <label for="city">Ville</label>
             <input id="city" name="city" value="{{ old('city') }}" autocomplete="address-level2">
-            @error('city') <div class="error">{{ $message }}</div> @enderror
+            @if ($errors->has('city') && session('_old_input')) <div class="error">{{ $errors->first('city') }}</div> @endif
         </div>
 
         <div style="margin-top:20px">
-            <button type="submit">Envoyer l'inscription</button>
+            <button
+                type="submit"
+                id="submit-btn"
+                onclick="this.disabled=true;
+                         this.innerText='Envoi en cours...';
+                         this.form.submit();">
+                Envoyer l'inscription
+            </button>
         </div>
     </form>
 </main>

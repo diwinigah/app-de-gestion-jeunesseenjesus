@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Enums\Gender;
+use App\Services\CampEditionService;
 use App\Services\RegistrationService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

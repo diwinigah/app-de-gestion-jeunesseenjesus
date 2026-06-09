@@ -38,6 +38,9 @@ class NewRegistrationNotification extends Notification implements ShouldQueue
             ->line('Une nouvelle inscription a ete soumise.')
             ->line('Numero : ' . $registration->registration_number)
             ->line('Participant : ' . $registration->first_name . ' ' . $registration->last_name)
+            ->line('Téléphone : ' . $registration->phone)
+            ->line('WhatsApp : ' . ($registration->whatsapp_phone ?? 'Non renseigné'))
+            ->line('Ville : ' . ($registration->city ?? 'Non renseignée'))
             ->line('Edition : ' . $registration->campEdition->name)
             ->line('Section : ' . $registration->editionSection->section->label())
             ->action('Voir les inscriptions', url('/admin/registrations'));

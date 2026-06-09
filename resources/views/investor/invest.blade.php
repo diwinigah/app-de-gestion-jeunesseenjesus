@@ -37,23 +37,31 @@
         <form method="POST" action="{{ route('projects.invest', ['project' => $project->slug]) }}">
             @csrf
 
-            <div class="form-group @error('intended_amount') error @enderror">
+            <div class="form-group @if ($errors->has('intended_amount') && session('_old_input')) error @endif">
                 <label for="intended_amount">Montant proposé (F CFA) *</label>
                 <input type="number" name="intended_amount" id="intended_amount" value="{{ old('intended_amount') }}" step="1" min="1" required>
-                @error('intended_amount')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('intended_amount') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('intended_amount') }}</div>
+                @endif
             </div>
 
-            <div class="form-group @error('message') error @enderror">
+            <div class="form-group @if ($errors->has('message') && session('_old_input')) error @endif">
                 <label for="message">Message (optionnel)</label>
                 <textarea name="message" id="message" rows="4" placeholder="Partagez vos motivations ou vos conditions...">{{ old('message') }}</textarea>
-                @error('message')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('message') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('message') }}</div>
+                @endif
             </div>
 
-            <button type="submit" class="button">Soumettre ma proposition</button>
+            <button
+                type="submit"
+                id="submit-btn"
+                class="button"
+                onclick="this.disabled=true;
+                         this.innerText='Envoi en cours...';
+                         this.form.submit();">
+                Soumettre ma proposition
+            </button>
         </form>
     </div>
 </main>

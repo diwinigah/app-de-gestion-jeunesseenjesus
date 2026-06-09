@@ -17,7 +17,7 @@ Route::get('/camp', [RegistrationController::class, 'show'])
     ->name('registration.show');
 
 Route::post('/camp', [RegistrationController::class, 'store'])
-    ->middleware('throttle:5,1')
+    ->middleware('throttle:10,1')
     ->name('registration.store');
 
 Route::get('/camp/confirmation', [RegistrationController::class, 'confirmation'])
@@ -41,7 +41,7 @@ Route::get('/partenaires/demande', [PartnerController::class, 'showRequestForm']
     ->name('partners.request');
 
 Route::post('/partenaires/demande', [PartnerController::class, 'storeRequest'])
-    ->middleware('throttle:5,1')
+    ->middleware('throttle:10,1')
     ->name('partners.store');
 
 Route::get('/partenaires/confirmation', [PartnerController::class, 'confirmation'])

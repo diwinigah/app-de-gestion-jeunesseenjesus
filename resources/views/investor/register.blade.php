@@ -33,55 +33,63 @@
         <form method="POST" action="{{ route('investor.register') }}">
             @csrf
 
-            <div class="form-group @error('name') error @enderror">
+            <div class="form-group @if ($errors->has('name') && session('_old_input')) error @endif">
                 <label for="name">Nom complet *</label>
                 <input type="text" name="name" id="name" value="{{ old('name') }}" required>
-                @error('name')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('name') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('name') }}</div>
+                @endif
             </div>
 
-            <div class="form-group @error('organization_name') error @enderror">
+            <div class="form-group @if ($errors->has('organization_name') && session('_old_input')) error @endif">
                 <label for="organization_name">Organisation</label>
                 <input type="text" name="organization_name" id="organization_name" value="{{ old('organization_name') }}">
-                @error('organization_name')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('organization_name') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('organization_name') }}</div>
+                @endif
             </div>
 
-            <div class="form-group @error('email') error @enderror">
+            <div class="form-group @if ($errors->has('email') && session('_old_input')) error @endif">
                 <label for="email">Email *</label>
                 <input type="email" name="email" id="email" value="{{ old('email') }}" required>
-                @error('email')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('email') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('email') }}</div>
+                @endif
             </div>
 
-            <div class="form-group @error('phone') error @enderror">
+            <div class="form-group @if ($errors->has('phone') && session('_old_input')) error @endif">
                 <label for="phone">Téléphone *</label>
                 <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" placeholder="+226 XX XX XX XX" required>
-                @error('phone')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('phone') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('phone') }}</div>
+                @endif
             </div>
 
-            <div class="form-group @error('password') error @enderror">
+            <div class="form-group @if ($errors->has('password') && session('_old_input')) error @endif">
                 <label for="password">Mot de passe *</label>
                 <input type="password" name="password" id="password" required>
-                @error('password')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('password') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('password') }}</div>
+                @endif
             </div>
 
-            <div class="form-group @error('password_confirmation') error @enderror">
+            <div class="form-group @if ($errors->has('password_confirmation') && session('_old_input')) error @endif">
                 <label for="password_confirmation">Confirmer le mot de passe *</label>
                 <input type="password" name="password_confirmation" id="password_confirmation" required>
-                @error('password_confirmation')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                @if ($errors->has('password_confirmation') && session('_old_input'))
+                    <div class="error-message">{{ $errors->first('password_confirmation') }}</div>
+                @endif
             </div>
 
-            <button type="submit" class="button">S'inscrire</button>
+            <button
+                type="submit"
+                id="submit-btn"
+                class="button"
+                onclick="this.disabled=true;
+                         this.innerText='Envoi en cours...';
+                         this.form.submit();">
+                S'inscrire
+            </button>
         </form>
 
         <div class="link">

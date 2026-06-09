@@ -44,7 +44,7 @@
     </header>
 
     <section class="form-container">
-        @if ($errors->any())
+        @if ($errors->any() && session('_old_input'))
             <div class="success-message" style="background: #fee2e2; border-color: #fecaca; color: #991b1b;">
                 <strong>Erreurs détectées :</strong>
                 <ul style="margin: 8px 0 0; padding-left: 20px;">
@@ -71,9 +71,9 @@
                         value="{{ old('contact_name') }}"
                         placeholder="Jean Dupont"
                         required
-                        class="{{ $errors->has('contact_name') ? 'field-error' : '' }}"
+                        class="{{ $errors->has('contact_name') && session('_old_input') ? 'field-error' : '' }}"
                     >
-                    @if ($errors->has('contact_name'))
+                    @if ($errors->has('contact_name') && session('_old_input'))
                         <div class="error-message">{{ $errors->first('contact_name') }}</div>
                     @endif
                 </div>
@@ -90,9 +90,9 @@
                         value="{{ old('organization_name') }}"
                         placeholder="Acme Corporation"
                         required
-                        class="{{ $errors->has('organization_name') ? 'field-error' : '' }}"
+                        class="{{ $errors->has('organization_name') && session('_old_input') ? 'field-error' : '' }}"
                     >
-                    @if ($errors->has('organization_name'))
+                    @if ($errors->has('organization_name') && session('_old_input'))
                         <div class="error-message">{{ $errors->first('organization_name') }}</div>
                     @endif
                 </div>
@@ -109,9 +109,9 @@
                         name="email"
                         value="{{ old('email') }}"
                         placeholder="contact@example.com"
-                        class="{{ $errors->has('email') ? 'field-error' : '' }}"
+                        class="{{ $errors->has('email') && session('_old_input') ? 'field-error' : '' }}"
                     >
-                    @if ($errors->has('email'))
+                    @if ($errors->has('email') && session('_old_input'))
                         <div class="error-message">{{ $errors->first('email') }}</div>
                     @endif
                     <div class="helper-text">Optionnel</div>
@@ -129,9 +129,9 @@
                         value="{{ old('phone') }}"
                         placeholder="+221 77 123 45 67"
                         required
-                        class="{{ $errors->has('phone') ? 'field-error' : '' }}"
+                        class="{{ $errors->has('phone') && session('_old_input') ? 'field-error' : '' }}"
                     >
-                    @if ($errors->has('phone'))
+                    @if ($errors->has('phone') && session('_old_input'))
                         <div class="error-message">{{ $errors->first('phone') }}</div>
                     @endif
                 </div>
@@ -145,7 +145,7 @@
                     <select
                         id="type"
                         name="type"
-                        class="{{ $errors->has('type') ? 'field-error' : '' }}"
+                        class="{{ $errors->has('type') && session('_old_input') ? 'field-error' : '' }}"
                     >
                         <option value="">-- Sélectionner --</option>
                         <option value="church" {{ old('type') === 'church' ? 'selected' : '' }}>Église</option>
@@ -154,7 +154,7 @@
                         <option value="individual" {{ old('type') === 'individual' ? 'selected' : '' }}>Individu</option>
                         <option value="other" {{ old('type') === 'other' ? 'selected' : '' }}>Autre</option>
                     </select>
-                    @if ($errors->has('type'))
+                    @if ($errors->has('type') && session('_old_input'))
                         <div class="error-message">{{ $errors->first('type') }}</div>
                     @endif
                     <div class="helper-text">Optionnel</div>
@@ -170,9 +170,9 @@
                         name="website_url"
                         value="{{ old('website_url') }}"
                         placeholder="https://example.com"
-                        class="{{ $errors->has('website_url') ? 'field-error' : '' }}"
+                        class="{{ $errors->has('website_url') && session('_old_input') ? 'field-error' : '' }}"
                     >
-                    @if ($errors->has('website_url'))
+                    @if ($errors->has('website_url') && session('_old_input'))
                         <div class="error-message">{{ $errors->first('website_url') }}</div>
                     @endif
                     <div class="helper-text">Optionnel</div>
@@ -187,17 +187,32 @@
                     id="message"
                     name="message"
                     placeholder="Décrivez votre demande et comment vous envisagez de collaborer avec nous..."
-                    class="{{ $errors->has('message') ? 'field-error' : '' }}"
+                    class="{{ $errors->has('message') && session('_old_input') ? 'field-error' : '' }}"
                 ></textarea>
-                @if ($errors->has('message'))
+                @if ($errors->has('message') && session('_old_input'))
                     <div class="error-message">{{ $errors->first('message') }}</div>
                 @endif
                 <div class="helper-text">Optionnel (max. 2000 caractères)</div>
             </div>
 
             <div class="button-group">
-                <button type="submit" class="button primary">Soumettre la demande</button>
+                <button
+                    type="submit"
+                    id="submit-btn"
+                    class="button primary"
+                    onclick="this.disabled=true;
+                             this.innerText='Envoi en cours...';
+                             this.form.submit();">
+                    Soumettre la demande
+                </button>
                 <a href="{{ route('partners.index') }}" class="button secondary">Annuler</a>
+            </div>
+        </form>
+    </section>
+
+</main>
+</body>
+</html>
             </div>
         </form>
     </section>
