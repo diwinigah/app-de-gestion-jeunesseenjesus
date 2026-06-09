@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -179,51 +180,56 @@ class CampEditionResource extends Resource
                         ->all()),
             ])
             ->actions([
-                Tables\Actions\Action::make('activate')
-                    ->label('Activer')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Activer cette edition ?')
-                    ->modalDescription('Toutes les autres editions seront automatiquement desactivees.')
-                    ->visible(fn (CampEdition $record): bool => ! $record->is_active)
-                    ->action(function (CampEdition $record, CampEditionService $service): void {
-                        $service->activateEdition($record);
+                ActionGroup::make([
+                    Tables\Actions\Action::make('activate')
+                        ->label('Activer')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Activer cette edition ?')
+                        ->modalDescription('Toutes les autres editions seront automatiquement desactivees.')
+                        ->visible(fn (CampEdition $record): bool => ! $record->is_active)
+                        ->action(function (CampEdition $record, CampEditionService $service): void {
+                            $service->activateEdition($record);
 
-                        Notification::make()
-                            ->title('Edition activee')
-                            ->success()
-                            ->send();
-                    }),
-                Tables\Actions\Action::make('archive')
-                    ->label('Archiver')
-                    ->icon('heroicon-o-archive-box')
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->modalHeading('Archiver cette edition ?')
-                    ->modalDescription('Les statistiques et inscriptions existantes seront conservees.')
-                    ->visible(fn (CampEdition $record): bool => $record->status !== CampEditionStatus::Archived)
-                    ->action(function (CampEdition $record, CampEditionService $service): void {
-                        $service->archiveEdition($record);
+                            Notification::make()
+                                ->title('Edition activee')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('archive')
+                        ->label('Archiver')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Archiver cette edition ?')
+                        ->modalDescription('Les statistiques et inscriptions existantes seront conservees.')
+                        ->visible(fn (CampEdition $record): bool => $record->status !== CampEditionStatus::Archived)
+                        ->action(function (CampEdition $record, CampEditionService $service): void {
+                            $service->archiveEdition($record);
 
-                        Notification::make()
-                            ->title('Edition archivee')
-                            ->success()
-                            ->send();
-                    }),
-                Tables\Actions\Action::make('viewRegistrations')
-                    ->label('Voir les inscrits')
-                    ->icon('heroicon-o-users')
-                    ->color('gray')
-                    ->modalHeading(fn (CampEdition $record): string => 'Inscrits - ' . $record->name)
-                    ->modalDescription(fn (CampEdition $record): string => sprintf(
-                        'Cette edition compte %d inscrit(s). La ressource Inscriptions pourra ensuite filtrer cette liste par edition.',
-                        $record->registrations_count ?? $record->registrations()->count(),
-                    ))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Fermer'),
-                Tables\Actions\EditAction::make()
-                    ->label('Modifier'),
+                            Notification::make()
+                                ->title('Edition archivee')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('viewRegistrations')
+                        ->label('Voir les inscrits')
+                        ->icon('heroicon-o-users')
+                        ->color('gray')
+                        ->modalHeading(fn (CampEdition $record): string => 'Inscrits - ' . $record->name)
+                        ->modalDescription(fn (CampEdition $record): string => sprintf(
+                            'Cette edition compte %d inscrit(s). La ressource Inscriptions pourra ensuite filtrer cette liste par edition.',
+                            $record->registrations_count ?? $record->registrations()->count(),
+                        ))
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Fermer'),
+                    Tables\Actions\EditAction::make()
+                        ->label('Modifier'),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->tooltip('Actions')
+                    ->color('gray'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

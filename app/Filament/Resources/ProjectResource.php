@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -155,36 +156,41 @@ class ProjectResource extends Resource
                     ->sortable(),
             ])
             ->actions([
-                Tables\Actions\Action::make('publish')
-                    ->label('Publier')
-                    ->icon('heroicon-o-megaphone')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->visible(fn (Project $record): bool => $record->status === ProjectStatus::Draft)
-                    ->action(function (Project $record, ProjectService $service): void {
-                        $service->publishProject($record);
+                ActionGroup::make([
+                    Tables\Actions\Action::make('publish')
+                        ->label('Publier')
+                        ->icon('heroicon-o-megaphone')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->visible(fn (Project $record): bool => $record->status === ProjectStatus::Draft)
+                        ->action(function (Project $record, ProjectService $service): void {
+                            $service->publishProject($record);
 
-                        Notification::make()
-                            ->title('Projet publie')
-                            ->success()
-                            ->send();
-                    }),
-                Tables\Actions\Action::make('archive')
-                    ->label('Archiver')
-                    ->icon('heroicon-o-archive-box')
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->visible(fn (Project $record): bool => $record->status !== ProjectStatus::Archived)
-                    ->action(function (Project $record, ProjectService $service): void {
-                        $service->archiveProject($record);
+                            Notification::make()
+                                ->title('Projet publie')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('archive')
+                        ->label('Archiver')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->visible(fn (Project $record): bool => $record->status !== ProjectStatus::Archived)
+                        ->action(function (Project $record, ProjectService $service): void {
+                            $service->archiveProject($record);
 
-                        Notification::make()
-                            ->title('Projet archive')
-                            ->success()
-                            ->send();
-                    }),
-                Tables\Actions\EditAction::make()
-                    ->label('Modifier'),
+                            Notification::make()
+                                ->title('Projet archive')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\EditAction::make()
+                        ->label('Modifier'),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->tooltip('Actions')
+                    ->color('gray'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
