@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Notifications;
 
 use App\Models\PartnerRequest;
+use Filament\Notifications\Actions\Action as FilamentAction;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\DatabaseMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -56,19 +57,18 @@ class NewPartnerRequestNotification extends Notification implements ShouldQueue
      */
     public function toDatabase(object $notifiable): array
     {
-        return [
-            'title' => 'Nouvelle demande de partenariat',
-            'body' => $this->request->organization_name . ' - ' . $this->request->contact_name,
-            'icon' => 'heroicon-o-handshake',
-            'iconColor' => 'warning',
-            'actions' => [
-                [
-                    'name' => 'view',
-                    'label' => 'Voir la demande',
-                    'url' => '/admin/partner-requests/' . $this->request->id . '/edit',
-                ],
-            ],
-        ];
+        return FilamentNotification::make()
+            ->title('Nouvelle demande de partenariat')
+            ->body($this->request->organization_name . ' - ' . $this->request->contact_name)
+            ->icon('heroicon-o-building-office')
+            ->iconColor('info')
+            ->actions([
+                FilamentAction::make('voir')
+                    ->label('Voir la demande')
+                    ->url('/admin/partner-requests/' . $this->request->id . '/edit')
+                    ->button(),
+            ])
+            ->getDatabaseMessage();
     }
 
     public function toArray(object $notifiable): array

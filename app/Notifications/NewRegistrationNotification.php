@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Notifications;
 
 use App\Models\Registration;
+use Filament\Notifications\Actions\Action as FilamentAction;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -48,19 +50,24 @@ class NewRegistrationNotification extends Notification implements ShouldQueue
     {
         $registration = $this->registration->loadMissing(['campEdition', 'editionSection']);
 
-        return [
-            'title' => 'Nouvelle inscription',
-            'body' => $registration->first_name . ' ' . $registration->last_name,
-            'icon' => 'heroicon-o-user-plus',
-            'iconColor' => 'success',
-            'actions' => [
-                [
-                    'name' => 'view',
-                    'label' => 'Voir l\'inscription',
-                    'url' => '/admin/registrations/' . $registration->id . '/edit',
-                ],
-            ],
-        ];
+        return FilamentNotification::make()
+            ->title('Nouvelle inscription')
+            ->body(
+                $registration->first_name
+                . ' '
+                . $registration->last_name
+                . ' — '
+                . ($registration->campEdition->name ?? '')
+            )
+            ->icon('heroicon-o-user-plus')
+            ->iconColor('success')
+            ->actions([
+                FilamentAction::make('voir')
+                    ->label('Voir l\'inscription')
+                    ->url('/admin/registrations/' . $registration->id . '/edit')
+                    ->button(),
+            ])
+            ->getDatabaseMessage();
     }
 
     /**

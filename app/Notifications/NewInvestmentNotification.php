@@ -6,6 +6,8 @@ namespace App\Notifications;
 
 use App\Models\InvestorUser;
 use App\Models\Project;
+use Filament\Notifications\Actions\Action as FilamentAction;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -49,19 +51,18 @@ class NewInvestmentNotification extends Notification implements ShouldQueue
      */
     public function toDatabase(object $notifiable): array
     {
-        return [
-            'title' => 'Nouvelle proposition d\'investissement',
-            'body' => $this->investor->name . ' - ' . $this->project->title,
-            'icon' => 'heroicon-o-banknotes',
-            'iconColor' => 'info',
-            'actions' => [
-                [
-                    'name' => 'view',
-                    'label' => 'Voir la proposition',
-                    'url' => '/admin/resources/investor-interests',
-                ],
-            ],
-        ];
+        return FilamentNotification::make()
+            ->title('Nouvelle proposition d\'investissement')
+            ->body($this->investor->name . ' - ' . $this->project->title)
+            ->icon('heroicon-o-banknotes')
+            ->iconColor('warning')
+            ->actions([
+                FilamentAction::make('voir')
+                    ->label('Voir la proposition')
+                    ->url('/admin/resources/investor-interests')
+                    ->button(),
+            ])
+            ->getDatabaseMessage();
     }
 
     /**
