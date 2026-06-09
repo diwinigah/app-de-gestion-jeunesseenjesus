@@ -14,6 +14,7 @@ use App\Filament\Widgets\StatsOverviewWidget;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -35,6 +36,13 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::Blue,
+            ])
+            ->brandName('Jeunesse en Jésus')
+            ->brandLogo(asset('images/logo.png'))
+            ->brandLogoHeight('2.75rem')
+            ->sidebarCollapsibleOnDesktop()
+            ->assets([
+                Css::make('admin-panel-theme')->html(asset('css/admin-panel-theme.css')),
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
