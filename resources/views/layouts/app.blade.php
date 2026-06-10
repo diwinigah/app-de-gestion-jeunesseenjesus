@@ -334,49 +334,170 @@ a {
 /* === MOBILE === */
 @media (max-width: 768px) {
     .j2-nav-list {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #fff;
-        padding: 20px;
-        border-top: 1px solid #eee;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        display: none !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: #ffffff !important;
+        padding: 16px 20px !important;
+        border-top: 2px solid #E8490F !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+        z-index: 999 !important;
+        gap: 4px !important;
     }
 
     .j2-nav-list.open {
-        display: flex;
+        display: flex !important;
+    }
+
+    .j2-nav-link {
+        padding: 10px 16px !important;
+        border-radius: 4px !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .j2-nav-link:hover,
+    .j2-nav-link.active {
+        background: #FFF5F2 !important;
+        color: #E8490F !important;
     }
 
     .j2-hamburger {
-        display: block;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px !important;
+        height: 40px !important;
+        background: none !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        font-size: 1.3rem !important;
+        cursor: pointer !important;
+        color: #333 !important;
+    }
+
+    .j2-header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        background: #fff !important;
+        width: 100% !important;
     }
 
     .j2-footer-inner {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
     }
 
     .j2-topbar-inner {
-        justify-content: center;
-        text-align: center;
+        justify-content: center !important;
+        text-align: center !important;
     }
 
     .j2-topbar {
-        display: none;
+        display: none !important;
     }
 
     .j2-main {
-        padding: 24px 16px;
+        padding: 24px 16px !important;
+    }
+}
+
+/* === TABLET (same behavior as mobile) === */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .j2-nav-list {
+        display: none !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: #ffffff !important;
+        padding: 16px 20px !important;
+        border-top: 2px solid #E8490F !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+        z-index: 999 !important;
+        gap: 4px !important;
+    }
+
+    .j2-nav-list.open {
+        display: flex !important;
+    }
+
+    .j2-nav-link {
+        padding: 10px 16px !important;
+        border-radius: 4px !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .j2-nav-link:hover,
+    .j2-nav-link.active {
+        background: #FFF5F2 !important;
+        color: #E8490F !important;
+    }
+
+    .j2-hamburger {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px !important;
+        height: 40px !important;
+        background: none !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        font-size: 1.3rem !important;
+        cursor: pointer !important;
+        color: #333 !important;
+    }
+
+    .j2-header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        background: #fff !important;
+        width: 100% !important;
+    }
+
+    .j2-footer-inner {
+        grid-template-columns: 1fr !important;
+    }
+
+    .j2-topbar-inner {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .j2-topbar {
+        display: none !important;
+    }
+
+    .j2-main {
+        padding: 24px 16px !important;
+    }
+}
+
+/* === DESKTOP OVERRIDES === */
+@media (min-width: 1025px) {
+    .j2-nav-list {
+        display: flex !important;
+    }
+
+    .j2-hamburger {
+        display: none !important;
     }
 }
 </style>
 
 <script>
-document.getElementById('hamburger').addEventListener('click', function() {
-    document.querySelector('.j2-nav-list').classList.toggle('open');
-});
+document.getElementById('hamburger')
+    ?.addEventListener('click', function() {
+        document
+            .querySelector('.j2-nav-list')
+            ?.classList.toggle('open');
+    });
 </script>
 
 @stack('scripts')
