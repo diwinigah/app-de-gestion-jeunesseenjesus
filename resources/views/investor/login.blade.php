@@ -1,62 +1,58 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Se connecter - Investisseur</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: Arial, sans-serif; background: #f6f7f9; color: #172033; }
-        main { width: min(100%, 500px); margin: 0 auto; padding: 28px 16px; }
-        .form-container { background: #fff; border: 1px solid #dfe3ea; border-radius: 8px; padding: 24px; }
-        h1 { margin: 0 0 24px; font-size: 1.8rem; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
-        input { width: 100%; padding: 10px; border: 1px solid #dfe3ea; border-radius: 4px; font-size: 0.95rem; font-family: Arial, sans-serif; }
-        input:focus { outline: none; border-color: #047857; box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.1); }
-        .error-message { color: #dc2626; font-size: 0.85rem; margin-top: 4px; }
-        .form-group.error input { border-color: #dc2626; }
-        .button { display: inline-flex; width: 100%; align-items: center; justify-content: center; min-height: 44px; background: #172033; color: #fff; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 12px; }
-        .button:hover { background: #0d1520; }
-        .link { text-align: center; margin-top: 16px; }
-        .link a { color: #047857; text-decoration: none; font-weight: 600; }
-        @media (max-width: 600px) { main { padding: 16px 12px; } .form-container { padding: 18px; } }
-    </style>
-</head>
-<body>
-<x-investor-navbar />
+@extends('layouts.app')
 
-<main>
-    <div class="form-container">
-        <h1>Se connecter</h1>
+@section('title', 'Se connecter - Investisseur')
+
+@push('styles')
+<style>
+    .inv-login-container { width: min(100%, 500px); margin: 40px auto; }
+    .inv-login-box { background: #fff; border: 1px solid #dfe3ea; border-radius: 8px; padding: 24px; }
+    .inv-login-h1 { margin: 0 0 24px; font-size: 1.8rem; color: #333; }
+    .inv-login-group { margin-bottom: 16px; }
+    .inv-login-label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #333; }
+    .inv-login-input { width: 100%; padding: 10px; border: 1px solid #dfe3ea; border-radius: 4px; font-size: 0.95rem; font-family: Arial, sans-serif; color: #333; }
+    .inv-login-input:focus { outline: none; border-color: #E8490F; box-shadow: 0 0 0 3px rgba(232, 73, 15, 0.1); }
+    .inv-login-error { color: #dc2626; font-size: 0.85rem; margin-top: 4px; }
+    .inv-login-group.error .inv-login-input { border-color: #dc2626; }
+    .inv-login-btn { display: inline-flex; width: 100%; align-items: center; justify-content: center; min-height: 44px; background: #E8490F; color: #fff; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 12px; }
+    .inv-login-btn:hover { background: #C73D0A; }
+    .inv-login-links { text-align: center; margin-top: 16px; }
+    .inv-login-links div { margin-bottom: 8px; }
+    .inv-login-links a { color: #E8490F; text-decoration: none; font-weight: 600; }
+    .inv-login-links a:hover { text-decoration: underline; }
+</style>
+@endpush
+
+@section('content')
+<div class="inv-login-container">
+    <div class="inv-login-box">
+        <h1 class="inv-login-h1">Se connecter</h1>
 
         <form method="POST" action="{{ route('investor.login') }}">
             @csrf
 
-            <div class="form-group @error('email') error @enderror">
-                <label for="email">Email *</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus>
+            <div class="inv-login-group @error('email') error @enderror">
+                <label for="email" class="inv-login-label">Email *</label>
+                <input type="email" name="email" id="email" class="inv-login-input" value="{{ old('email') }}" required autofocus>
                 @error('email')
-                    <div class="error-message">{{ $message }}</div>
+                    <div class="inv-login-error">{{ $message }}</div>
                 @enderror
             </div>
 
-            <div class="form-group @error('password') error @enderror">
-                <label for="password">Mot de passe *</label>
-                <input type="password" name="password" id="password" required>
+            <div class="inv-login-group @error('password') error @enderror">
+                <label for="password" class="inv-login-label">Mot de passe *</label>
+                <input type="password" name="password" id="password" class="inv-login-input" required>
                 @error('password')
-                    <div class="error-message">{{ $message }}</div>
+                    <div class="inv-login-error">{{ $message }}</div>
                 @enderror
             </div>
 
-            <button type="submit" class="button">Se connecter</button>
+            <button type="submit" class="inv-login-btn">Se connecter</button>
         </form>
 
-        <div class="link">
+        <div class="inv-login-links">
             <div>Pas encore inscrit ? <a href="{{ route('investor.register') }}">S'inscrire</a></div>
-            <div style="margin-top: 8px;"><a href="{{ route('investor.password.request') }}">Mot de passe oublié ?</a></div>
+            <div><a href="{{ route('investor.password.request') }}">Mot de passe oublié ?</a></div>
         </div>
     </div>
-</main>
-</body>
-</html>
+</div>
+@endsection

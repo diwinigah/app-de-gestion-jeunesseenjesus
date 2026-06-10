@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Use Bootstrap-style pagination views to avoid Tailwind markup conflicts
+        Paginator::useBootstrap();
+
         ResetPassword::createUrlUsing(function (object $notifiable, string $token): string {
             return route('investor.password.reset', [
                 'token' => $token,
