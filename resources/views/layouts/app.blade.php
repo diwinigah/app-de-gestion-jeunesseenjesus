@@ -2,6 +2,14 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon"
+        type="image/png"
+        href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon"
+        type="image/png"
+        href="{{ asset('images/logo.png') }}">
+    <link rel="apple-touch-icon"
+        href="{{ asset('images/logo.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Jeunesse en Jésus')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
