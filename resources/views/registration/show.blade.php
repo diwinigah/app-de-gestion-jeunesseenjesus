@@ -114,7 +114,7 @@
                 <option value="">-- Aucune / Invité --</option>
                 @foreach ($sections as $section)
                     <option value="{{ $section->id }}" @selected((string) old('edition_section_id') === (string) $section->id)>
-                        {{ $section->section->label() }} - {{ number_format((float) $section->price, 0, ',', ' ') }} {{ $edition->currency }}
+                        {{ $section->section->label() }}
                     </option>
                 @endforeach
             </select>

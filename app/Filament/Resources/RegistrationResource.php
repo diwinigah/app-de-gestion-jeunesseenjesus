@@ -139,9 +139,9 @@ class RegistrationResource extends Resource
                             ->minValue(0),
                         Forms\Components\TextInput::make('remaining_amount')
                             ->label('Montant restant')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0),
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->remaining_amount, 2, ',', ' ')),
                         Forms\Components\Select::make('payment_status')
                             ->label('Statut paiement')
                             ->options(self::paymentStatusOptions())
@@ -529,7 +529,7 @@ class RegistrationResource extends Resource
             ->get();
 
         foreach ($sections as $section) {
-            $options[$section->getKey()] = $section->section->label() . ' - ' . number_format((float) $section->price, 0, ',', ' ');
+            $options[$section->getKey()] = $section->section->label();
         }
 
         return $options;
