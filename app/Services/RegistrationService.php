@@ -43,16 +43,20 @@ class RegistrationService
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            /** @var EditionSection $section */
-            $section = EditionSection::query()
-                ->where('camp_edition_id', $lockedEdition->getKey())
-                ->where('is_active', true)
-                ->findOrFail((int) $data['edition_section_id']);
+            /** @var EditionSection|null $section */
+            $section = null;
+            if (! empty($data['edition_section_id'])) {
+                $section = EditionSection::query()
+                    ->where('camp_edition_id', $lockedEdition->getKey())
+                    ->where('id', (int) $data['edition_section_id'])
+                    ->where('is_active', true)
+                    ->first();
+            }
 
             /** @var Registration $registration */
             $registration = Registration::query()->create([
                 'camp_edition_id' => $lockedEdition->getKey(),
-                'edition_section_id' => $section->getKey(),
+                'edition_section_id' => $data['edition_section_id'] ?? null,
                 'registration_number' => $this->generateRegistrationNumber($lockedEdition),
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
@@ -60,9 +64,12 @@ class RegistrationService
                 'phone' => $data['phone'],
                 'whatsapp_phone' => $data['whatsapp_phone'] ?? null,
                 'city' => $data['city'] ?? null,
-                'total_amount' => $section->price,
+                'days_presence' => $data['days_presence'] ?? null,
+                'children_count' => isset($data['children_count']) ? (int) $data['children_count'] : null,
+                'bus_departure' => isset($data['bus_departure']) ? (bool) $data['bus_departure'] : null,
+                'total_amount' => $section ? $section->price : 0,
                 'paid_amount' => 0,
-                'remaining_amount' => $section->price,
+                'remaining_amount' => $section ? $section->price : 0,
                 'payment_status' => PaymentStatus::Unpaid,
                 'registration_status' => RegistrationStatus::Pending,
                 'submitted_at' => now(),

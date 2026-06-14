@@ -27,6 +27,8 @@ class CampEdition extends Model
         'currency',
         'status',
         'is_active',
+        'show_days_presence', 'show_children_count', 'show_bus_departure',
+        'show_participant_type',
     ];
 
     /**
@@ -40,6 +42,10 @@ class CampEdition extends Model
         'camp_end_date' => 'date',
         'status' => CampEditionStatus::class,
         'is_active' => 'boolean',
+        'show_days_presence' => 'boolean',
+        'show_children_count' => 'boolean',
+        'show_bus_departure' => 'boolean',
+        'show_participant_type' => 'boolean',
     ];
 
     public function registrations(): HasMany

@@ -86,8 +86,9 @@ class RegistrationResource extends Resource
                             ->live(),
                         Forms\Components\Select::make('edition_section_id')
                             ->label('Section')
+                            ->helperText('Facultatif — laisser vide si invité')
                             ->options(fn (Get $get): array => self::getEditionSectionOptions((int) $get('camp_edition_id')))
-                            ->required()
+                            ->nullable()
                             ->native(false),
                         Forms\Components\TextInput::make('registration_number')
                             ->label('Numero')
@@ -171,6 +172,43 @@ class RegistrationResource extends Resource
                             ->rows(4),
                     ])
                     ->columns(2),
+                Forms\Components\Section::make('Informations complémentaires')
+                    ->schema([
+                        Forms\Components\CheckboxList::make('days_presence')
+                            ->label('Jours de présence')
+                            ->options([
+                                'jour_1' => 'Jour 1',
+                                'jour_2' => 'Jour 2',
+                                'jour_3' => 'Jour 3',
+                                'jour_4' => 'Jour 4',
+                                'jour_5' => 'Jour 5',
+                                'jour_6' => 'Jour 6',
+                            ])
+                            ->nullable(),
+                        Forms\Components\TextInput::make('children_count')
+                            ->label('Nombre d\'enfants accompagnateurs')
+                            ->numeric()
+                            ->minValue(0)
+                            ->nullable(),
+                        Forms\Components\Select::make('participant_type')
+                            ->label('Vous êtes...')
+                            ->options([
+                                'eleve'    => 'Élève',
+                                'etudiant' => 'Étudiant',
+                                'adulte'   => 'Adulte',
+                            ])
+                            ->nullable(),
+                        Forms\Components\Toggle::make('bus_departure')
+                            ->label('Départ avec le bus')
+                            ->nullable(),
+                    ])
+                    ->columnSpanFull()
+                    ->visible(fn ($record) => $record && (
+                        $record->days_presence !== null ||
+                        $record->children_count !== null ||
+                        $record->bus_departure !== null ||
+                        $record->participant_type !== null
+                    )),
             ]);
     }
 
@@ -210,6 +248,25 @@ class RegistrationResource extends Resource
                     ->icon('heroicon-o-chat-bubble-left')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('days_presence')
+                    ->label('Jours')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn ($state): string => is_array($state) ? implode(', ', array_map(fn ($k) => [
+                        'jour_1' => 'Jour 1',
+                        'jour_2' => 'Jour 2',
+                        'jour_3' => 'Jour 3',
+                        'jour_4' => 'Jour 4',
+                        'jour_5' => 'Jour 5',
+                        'jour_6' => 'Jour 6',
+                    ][$k] ?? $k, array_keys(array_filter($state)))) : '—'),
+                Tables\Columns\TextColumn::make('children_count')
+                    ->label('Nbre d\'enfants')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('—'),
+                Tables\Columns\IconColumn::make('bus_departure')
+                    ->label('Bus')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('editionSection.section')
                     ->label('Section')
                     ->badge()
