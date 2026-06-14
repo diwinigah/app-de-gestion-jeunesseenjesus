@@ -36,7 +36,7 @@
         <!-- Logo -->
         <a href="https://jeunesseenjesus.org" class="j2-logo">
             <img
-                src="{{ asset('images/logo.svg') }}"
+                src="{{ asset('images/logo.png') }}"
                 alt="J²"
                 class="j2-logo-img"
                 onerror="this.style.display='none'">
@@ -117,7 +117,7 @@
             <h3 class="j2-footer-title">Site officiel</h3>
             <p>Pour plus d'informations sur nos activités :</p>
             <a href="https://jeunesseenjesus.org" target="_blank" class="j2-btn-orange">
-                Visiter jeunesseenjesus.org
+               Accueil
             </a>
         </div>
     </div>
