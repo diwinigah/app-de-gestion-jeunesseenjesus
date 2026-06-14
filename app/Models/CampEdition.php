@@ -19,6 +19,7 @@ class CampEdition extends Model
         'slug',
         'year',
         'description',
+        'cover_image_path',
         'registration_open_at',
         'registration_close_at',
         'camp_start_date',

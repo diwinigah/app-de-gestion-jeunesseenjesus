@@ -21,10 +21,32 @@
     .reg-form-note { font-size: 0.78rem; color: #888; margin-top: 4px; line-height: 1.4; }
     .reg-form-note strong { color: #c0392b; }
     @media (min-width: 680px) { .reg-grid.two { grid-template-columns: repeat(2, 1fr); } }
+    .form-cover-banner {
+        width: 100%;
+        margin-bottom: 1.5rem;
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+    }
+    .form-cover-banner img {
+        width: 100%;
+        max-height: 250px;
+        object-fit: cover;
+        display: block;
+    }
+    @media (max-width: 640px) {
+        .form-cover-banner img {
+            max-height: 140px;
+        }
+    }
 </style>
 @endpush
 
 @section('content')
+@if($edition->cover_image_path)
+    <div class="form-cover-banner">
+        <img alt="Bannière {{ $edition->name }}" src="{{ Storage::url($edition->cover_image_path) }}">
+    </div>
+@endif
 <div class="reg-header">
     <h1>Inscription Evenement</h1>
     <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>

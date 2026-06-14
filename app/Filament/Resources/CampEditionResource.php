@@ -50,6 +50,19 @@ class CampEditionResource extends Resource
                                     $set('slug', Str::slug($state));
                                 }
                             }),
+                        Forms\Components\FileUpload::make('cover_image_path')
+                            ->label('Image de couverture')
+                            ->helperText('L\'image sera recadrée automatiquement au format bannière 4:1')
+                            ->image()
+                            ->disk('public')
+                            ->directory('editions/covers')
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['4:1'])
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('1600')
+                            ->imageResizeTargetHeight('400')
+                            ->nullable()
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('slug')
                             ->label('Slug')
                             ->placeholder('camp-2026')
