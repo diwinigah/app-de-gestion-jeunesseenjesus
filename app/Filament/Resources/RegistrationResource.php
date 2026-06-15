@@ -148,11 +148,7 @@ class RegistrationResource extends Resource
                             ->options(self::paymentStatusOptions())
                             ->required()
                             ->native(false),
-                        Forms\Components\Select::make('registration_status')
-                            ->label('Statut inscription')
-                            ->options(self::registrationStatusOptions())
-                            ->required()
-                            ->native(false),
+                        
                         Forms\Components\DateTimePicker::make('submitted_at')
                             ->label('Date de soumission')
                             ->required()
@@ -163,16 +159,7 @@ class RegistrationResource extends Resource
                     ])
                     ->columns(3),
 
-                Forms\Components\Section::make('Notes')
-                    ->schema([
-                        Forms\Components\Textarea::make('notes')
-                            ->label('Notes participant')
-                            ->rows(4),
-                        Forms\Components\Textarea::make('admin_notes')
-                            ->label('Notes administrateur')
-                            ->rows(4),
-                    ])
-                    ->columns(2),
+                
                 Forms\Components\Section::make('Informations complémentaires')
                     ->schema([
                         Forms\Components\CheckboxList::make('days_presence')
@@ -298,17 +285,7 @@ class RegistrationResource extends Resource
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('registration_status')
-                    ->label('Inscription')
-                    ->badge()
-                    ->formatStateUsing(fn (RegistrationStatus|string $state): string => self::registrationStatusLabel($state))
-                    ->color(fn (RegistrationStatus|string $state): string => match ($state instanceof RegistrationStatus ? $state : RegistrationStatus::from($state)) {
-                        RegistrationStatus::Pending => 'warning',
-                        RegistrationStatus::Confirmed => 'success',
-                        RegistrationStatus::Cancelled => 'danger',
-                    })
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                
                 Tables\Columns\TextColumn::make('submitted_at')
                     ->label('Soumission')
                     ->dateTime('d/m/Y H:i')
@@ -332,34 +309,7 @@ class RegistrationResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\Action::make('confirm')
-                        ->label('Confirmer')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->visible(fn (Registration $record): bool => $record->registration_status !== RegistrationStatus::Confirmed)
-                        ->requiresConfirmation()
-                        ->action(function (Registration $record, RegistrationService $service): void {
-                            $service->confirmRegistration($record);
-
-                            Notification::make()
-                                ->title('Inscription confirmee')
-                                ->success()
-                                ->send();
-                        }),
-                    Tables\Actions\Action::make('cancel')
-                        ->label('Annuler')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->visible(fn (Registration $record): bool => $record->registration_status !== RegistrationStatus::Cancelled)
-                        ->requiresConfirmation()
-                        ->action(function (Registration $record, RegistrationService $service): void {
-                            $service->cancelRegistration($record);
-
-                            Notification::make()
-                                ->title('Inscription annulee')
-                                ->success()
-                                ->send();
-                        }),
+                    
                     Tables\Actions\Action::make('confirm_payment')
                         ->label('Paiement confirmé')
                         ->icon('heroicon-o-check-circle')
