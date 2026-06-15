@@ -18,6 +18,8 @@ class ListRegistrations extends ListRecords
 {
     protected static string $resource = RegistrationResource::class;
 
+    public ?string $activeTab = 'actives';
+
     /**
      * @return array<int, Actions\Action>
      */
@@ -68,8 +70,9 @@ class ListRegistrations extends ListRecords
         ];
     }
 
-    public function getDefaultActiveTab(): string | int | null
+    public function getActiveTab(): string | int | null
     {
-        return 'actives';
+        return $this->activeTab ?? null;
     }
+
 }
