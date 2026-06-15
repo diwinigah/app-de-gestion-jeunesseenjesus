@@ -176,7 +176,7 @@
             <label class="reg-label">Départ avec le bus ? *</label>
             <div class="radio-group">
                 <label>
-                    <input type="radio" name="bus_departure" value="1" @checked(old('bus_departure') === '1')> Oui
+                    <input type="radio" name="bus_departure" value="1" @checked(old('bus_departure') === '1') required> Oui
                 </label>
                 <label>
                     <input type="radio" name="bus_departure" value="0" @checked(old('bus_departure') === '0')> Non

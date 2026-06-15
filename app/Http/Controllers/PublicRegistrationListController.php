@@ -8,6 +8,7 @@ use App\Services\CampEditionService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use App\Models\Registration;
+use App\Enums\RegistrationStatus;
 use Illuminate\Http\RedirectResponse;
 
 class PublicRegistrationListController extends Controller
@@ -18,12 +19,13 @@ class PublicRegistrationListController extends Controller
 
     public function index(): View|RedirectResponse
     {
-        $edition = $this->campEditionService->getCurrentActiveEdition();
+        $activeEdition = $this->campEditionService->getCurrentActiveEdition();
 
-        if ($edition === null) {
-            return redirect()
-                ->route('registration.show')
-                ->with('status', 'Aucune edition active actuellement');
+        if ($activeEdition === null) {
+            return view('public.inscriptions', [
+                'registrations' => collect(),
+                'edition' => null,
+            ]);
         }
 
         /** @var LengthAwarePaginator<Registration> $registrations */
@@ -39,14 +41,15 @@ class PublicRegistrationListController extends Controller
                 'edition_section_id',
                 'submitted_at',
             ])
-            ->where('camp_edition_id', $edition->getKey())
-            ->with(['editionSection'])
-            ->orderBy('submitted_at', 'desc')
-            ->paginate(20);
+            ->where('camp_edition_id', $activeEdition->getKey())
+            ->where('registration_status', RegistrationStatus::Confirmed)
+            ->with(['campEdition', 'editionSection'])
+            ->orderBy('last_name')
+            ->paginate(50);
 
         return view('public.inscriptions', [
-            'edition' => $edition,
             'registrations' => $registrations,
+            'edition' => $activeEdition,
         ]);
     }
 }

@@ -24,11 +24,25 @@ class RegistrationService
 
     public function generateRegistrationNumber(CampEdition $edition): string
     {
-        $nextNumber = Registration::query()
+        // Compter uniquement les inscriptions de cette édition.
+        // IMPORTANT: cette méthode doit être appelée depuis une transaction
+        // pour que le lockForUpdate fonctionne correctement (voir createRegistration()).
+        $count = Registration::query()
             ->where('camp_edition_id', $edition->getKey())
-            ->count() + 1;
+            ->lockForUpdate()
+            ->count();
 
-        return sprintf('CAMP-%d-%05d', $edition->year, $nextNumber);
+        $sequence = str_pad((string) ($count + 1), 5, '0', STR_PAD_LEFT);
+        $number = sprintf('CAMP-%d-%s', $edition->year, $sequence);
+
+        // Si collision (imports ou concurrents), incrémenter jusqu'à trouver un numéro libre
+        while (Registration::query()->where('registration_number', $number)->exists()) {
+            $count++;
+            $sequence = str_pad((string) ($count + 1), 5, '0', STR_PAD_LEFT);
+            $number = sprintf('CAMP-%d-%s', $edition->year, $sequence);
+        }
+
+        return $number;
     }
 
     /**
@@ -54,7 +68,7 @@ class RegistrationService
             }
 
             /** @var Registration $registration */
-            $registration = Registration::query()->create([
+            $dataToInsert = [
                 'camp_edition_id' => $lockedEdition->getKey(),
                 'edition_section_id' => $data['edition_section_id'] ?? null,
                 'registration_number' => $this->generateRegistrationNumber($lockedEdition),
@@ -64,17 +78,32 @@ class RegistrationService
                 'phone' => $data['phone'],
                 'whatsapp_phone' => $data['whatsapp_phone'] ?? null,
                 'city' => $data['city'] ?? null,
-                'days_presence' => $data['days_presence'] ?? null,
-                'children_count' => isset($data['children_count']) ? (int) $data['children_count'] : null,
-                'bus_departure' => isset($data['bus_departure']) ? (bool) $data['bus_departure'] : null,
-                'participant_type' => $data['participant_type'] ?? null,
                 'total_amount' => 0,
                 'paid_amount' => 0,
                 'remaining_amount' => 0,
                 'payment_status' => PaymentStatus::Unpaid,
                 'registration_status' => RegistrationStatus::Pending,
                 'submitted_at' => now(),
-            ]);
+            ];
+
+            // Ajouter uniquement si activé par l'admin pour l'édition verrouillée
+            if ($lockedEdition->show_days_presence) {
+                $dataToInsert['days_presence'] = $data['days_presence'] ?? null;
+            }
+
+            if ($lockedEdition->show_children_count) {
+                $dataToInsert['children_count'] = isset($data['children_count']) ? (int) $data['children_count'] : null;
+            }
+
+            if ($lockedEdition->show_bus_departure) {
+                $dataToInsert['bus_departure'] = isset($data['bus_departure']) ? (bool) $data['bus_departure'] : null;
+            }
+
+            if ($lockedEdition->show_participant_type) {
+                $dataToInsert['participant_type'] = $data['participant_type'] ?? null;
+            }
+
+            $registration = Registration::query()->create($dataToInsert);
 
             Notification::send(
                 User::query()->get(),

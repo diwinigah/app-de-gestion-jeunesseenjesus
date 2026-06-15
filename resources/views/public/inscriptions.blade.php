@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $edition->name . ' - Liste des inscrits')
+@section('title', isset($edition) && $edition ? $edition->name . ' - Liste des inscrits' : 'Inscrits')
 
 @push('styles')
 <style>
@@ -39,8 +39,12 @@
 @section('content')
 <div class="insc-container">
     <div class="insc-header">
-        <h1 class="insc-h1">{{ $edition->name }} — Liste des inscrits</h1>
-        <p class="insc-h1-sub">Total : {{ $registrations->total() }}</p>
+        @if($edition)
+            <h1 class="insc-h1">Inscrits — {{ $edition->name }}</h1>
+            <p class="insc-h1-sub">Total : {{ $registrations->total() }}</p>
+        @else
+            <h1 class="insc-h1">Aucune édition en cours.</h1>
+        @endif
     </div>
 
     <div class="insc-table-wrapper">

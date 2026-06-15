@@ -38,13 +38,24 @@ class StoreRegistrationRequest extends FormRequest
                     ->where('camp_edition_id', $edition?->getKey())
                     ->where('is_active', true),
             ],
-            'days_presence'   => ['nullable', 'array'],
-            'days_presence.*' => ['in:jour_1,jour_2,jour_3,jour_4,jour_5,jour_6'],
-            'children_count'  => ['nullable', 'integer', 'min:0', 'max:20'],
-            'bus_departure'   => ['nullable', 'boolean'],
-            'participant_type' => [
+            'days_presence' => [
+                $edition?->show_days_presence ? 'required' : 'nullable',
+                'array',
+            ],
+            'days_presence.*' => [
                 'nullable',
-                Rule::requiredIf(fn () => $edition?->show_participant_type ?? false),
+                'in:jour_1,jour_2,jour_3,jour_4,jour_5,jour_6',
+            ],
+
+            'children_count'  => ['nullable', 'integer', 'min:0', 'max:20'],
+
+            'bus_departure' => [
+                $edition?->show_bus_departure ? 'required' : 'nullable',
+                'boolean',
+            ],
+
+            'participant_type' => [
+                $edition?->show_participant_type ? 'required' : 'nullable',
                 Rule::in(['eleve', 'etudiant', 'adulte']),
             ],
         ];
@@ -67,6 +78,9 @@ class StoreRegistrationRequest extends FormRequest
             'whatsapp_phone.regex' => 'Le numero WhatsApp n\'est pas valide.',
             'city.max' => 'La ville ne peut pas depasser :max caracteres.',
             'edition_section_id.exists' => 'La section selectionnee est indisponible.',
+            'days_presence.required'    => 'Veuillez indiquer vos jours de présence.',
+            'bus_departure.required'    => 'Veuillez indiquer si vous partez avec le bus.',
+            'participant_type.required' => 'Veuillez indiquer votre statut (Élève, Étudiant ou Adulte).',
         ];
     }
 

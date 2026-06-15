@@ -27,6 +27,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Components\Tab;
 
 class RegistrationResource extends Resource
 {
@@ -217,6 +218,13 @@ class RegistrationResource extends Resource
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['campEdition', 'editionSection']))
             ->columns([
+                Tables\Columns\TextColumn::make('campEdition.name')
+                    ->label('Édition')
+                    ->badge()
+                    ->color('gray')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
+                    ->visible(fn ($record, $livewire = null): bool => ($livewire?->getActiveTab() ?? null) === 'archives'),
                 Tables\Columns\TextColumn::make('registration_number')
                     ->label('Numero')
                     ->searchable()
@@ -546,4 +554,19 @@ class RegistrationResource extends Resource
             'edit' => Pages\EditRegistration::route('/{record}/edit'),
         ];
     }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $activeEdition = CampEdition::where('is_active', true)->first();
+
+        $query = parent::getEloquentQuery();
+
+        if ($activeEdition) {
+            $query = $query->where('camp_edition_id', $activeEdition->id);
+        }
+
+        return $query->with(['campEdition', 'editionSection']);
+    }
+
+    
 }
