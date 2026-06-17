@@ -168,6 +168,55 @@ class SponsoringResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
+                Section::make('Répartition des participants')
+                    ->schema([
+                        Grid::make(4)->schema([
+                            TextInput::make('participants_adultes')
+                                ->label('Adultes')->numeric()->default(0),
+                            TextInput::make('participants_etudiants')
+                                ->label('Étudiants')->numeric()->default(0),
+                            TextInput::make('participants_lycee')
+                                ->label('Lycée/Collège')->numeric()->default(0),
+                            TextInput::make('participants_enfants')
+                                ->label('Enfants')->numeric()->default(0),
+                        ]),
+
+                        Repeater::make('participants_geo')
+                            ->label('Répartition géographique')
+                            ->schema([
+                                Grid::make(2)->schema([
+                                    TextInput::make('ville')
+                                        ->label('Ville/Zone')->required(),
+                                    TextInput::make('nombre')
+                                        ->label('Nombre')->numeric()->required(),
+                                ]),
+                            ])
+                            ->addActionLabel('Ajouter une ville')
+                            ->defaultItems(0)
+                            ->nullable()
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Budget prévisionnel — Dépenses')
+                    ->schema([
+                        Repeater::make('budget_expenses')
+                            ->label('')
+                            ->schema([
+                                Grid::make(3)->schema([
+                                    TextInput::make('designation')
+                                        ->label('Désignation')->required(),
+                                    TextInput::make('prix_unitaire')
+                                        ->label('Prix unitaire (FCFA)')->numeric()->default(0),
+                                    TextInput::make('quantite')
+                                        ->label('Quantité')->numeric()->default(1),
+                                ]),
+                            ])
+                            ->addActionLabel('Ajouter une ligne de dépense')
+                            ->defaultItems(0)
+                            ->nullable()
+                            ->columnSpanFull(),
+                    ]),
+
             ]);
     }
 

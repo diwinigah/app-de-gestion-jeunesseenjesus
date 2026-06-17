@@ -45,6 +45,10 @@ class EditSponsoring extends EditRecord
             'sponsoring_contact_phone',
             'sponsoring_contact_email',
             'nature_contributions',
+            'budget_entries', 'budget_expenses',
+            'participants_adultes', 'participants_etudiants',
+            'participants_lycee', 'participants_enfants',
+            'participants_geo',
         ];
 
         // Utiliser le service si des transformations supplémentaires existent
@@ -54,7 +58,10 @@ class EditSponsoring extends EditRecord
         }
 
         // Sinon, mise à jour manuelle en ne touchant qu'aux champs sponsoring
-        $record->update(collect($data)->only($sponsoringFields)->toArray());
+        // Ne jamais écraser is_active via ce formulaire
+        $filtered = collect($data)->only($sponsoringFields)->toArray();
+        $record->fill($filtered);
+        $record->save();
 
         return $record;
     }
