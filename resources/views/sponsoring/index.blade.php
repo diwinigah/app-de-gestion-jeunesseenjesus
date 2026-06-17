@@ -1,9 +1,19 @@
 @extends('layouts.app')
 
 @section('title', 'Sponsoring ' . ($edition?->name ?? 'Camp'))
+
 @push('styles')
 
 <style>
+/* icônes inline pour remplacer les émojis */
+.sp-icon { display: inline-flex; align-items: center; justify-content: center; }
+.sp-section-title .sp-icon svg { width: 22px; height: 22px; color: #E8490F; }
+.sp-bourse-icon .sp-icon svg { width: 36px; height: 36px; color: #E8490F; }
+.sp-bourse-libre .sp-icon svg { color: #d4a017; }
+.sp-payment-icon .sp-icon svg { width: 40px; height: 40px; color: #3D2B1F; }
+.sp-contact-item .sp-icon svg { width: 20px; height: 20px; color: #fff; }
+.sp-nature-num svg { width: 14px; height: 14px; }
+
 /* ═══════════════════════════════════
    SPONSORING PAGE — DESIGN PRO
 ════════════════════════════════════ */
@@ -123,7 +133,9 @@
 
 @if(!$edition)
     <div class="sp-closed">
-        <div class="sp-closed-icon">🙏</div>
+        <div class="sp-closed-icon"><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 00-7 7v1a2 2 0 01-2 2v1a2 2 0 002 2 7 7 0 007 7 7 7 0 007-7 7 7 0 00-7-7z"/></svg>
+        </span></div>
         <h1>Page de sponsoring</h1>
         <p>Aucune campagne de sponsoring active pour le moment. Revenez bientôt !</p>
     </div>
@@ -148,7 +160,9 @@
                 <div class="sp-hero-verse">{{ $edition->sponsoring_verse }}</div>
             @endif
             @if($edition->camp_start_date && $edition->camp_end_date)
-                <div class="sp-hero-dates">📅 {{ \Carbon\Carbon::parse($edition->camp_start_date)->translatedFormat('d F') }} — {{ \Carbon\Carbon::parse($edition->camp_end_date)->translatedFormat('d F Y') }}</div>
+                <div class="sp-hero-dates"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </span> {{ \Carbon\Carbon::parse($edition->camp_start_date)->translatedFormat('d F') }} — {{ \Carbon\Carbon::parse($edition->camp_end_date)->translatedFormat('d F Y') }}</div>
             @endif
         </div>
     </div>
@@ -164,7 +178,7 @@
 
     {{-- INTRO --}}
     @if($edition->sponsoring_intro)
-    <div class="sp-section sp-intro">{!! nl2br(e($edition->sponsoring_intro)) !!}</div>
+    <div class="sp-section sp-intro">{!! nl2br(html_entity_decode(e($edition->sponsoring_intro))) !!}</div>
     @endif
 
     {{-- PROGRESSION & BOURSES --}}
@@ -180,7 +194,9 @@
         </div>
 
         <div class="sp-bourse-card sp-bourse-featured">
-            <div class="sp-bourse-icon">⭐</div>
+            <div class="sp-bourse-icon"><span class="sp-icon"> 
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.95a1 1 0 00.95.69h4.153c.969 0 1.371 1.24.588 1.81l-3.36 2.44a1 1 0 00-.364 1.118l1.287 3.95c.3.921-.755 1.688-1.538 1.118l-3.36-2.44a1 1 0 00-1.176 0l-3.36 2.44c-.783.57-1.838-.197-1.538-1.118l1.287-3.95a1 1 0 00-.364-1.118L2.07 9.377c-.783-.57-.38-1.81.588-1.81h4.153a1 1 0 00.95-.69l1.286-3.95z"/></svg>
+            </span></div>
             <h4>Bourse Pleine</h4>
             <p>Couvrez l'intégralité des frais d'un jeune</p>
             <div class="sp-bourse-amount">{{ number_format($edition->bourse_pleine_amount ?? 0, 0, ',', ' ') }} FCFA <small>par campeur</small></div>
@@ -189,11 +205,15 @@
 
     {{-- BOURSES DÉTAILLÉES --}}
     <div class="sp-section">
-        <div class="sp-section-title">🎓 Types de bourses</div>
+        <div class="sp-section-title"><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422"/><path d="M12 14v7"/></svg>
+        </span> Types de bourses</div>
         <div class="sp-bourse-grid">
             @if($edition->bourse_adulte_amount)
             <div class="sp-bourse-card">
-                <div class="sp-bourse-icon">🧑</div>
+                <div class="sp-bourse-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-3-3.87"/><path d="M4 21v-2a4 4 0 013-3.87"/><circle cx="12" cy="7" r="4"/></svg>
+                </span></div>
                 <h4>Adulte</h4>
                 <div class="sp-bourse-amount">{{ number_format($edition->bourse_adulte_amount,0,',',' ') }} FCFA</div>
             </div>
@@ -201,7 +221,9 @@
 
             @if($edition->bourse_etudiant_amount)
             <div class="sp-bourse-card">
-                <div class="sp-bourse-icon">🎓</div>
+                <div class="sp-bourse-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422"/><path d="M12 14v7"/></svg>
+                </span></div>
                 <h4>Étudiant</h4>
                 <div class="sp-bourse-amount">{{ number_format($edition->bourse_etudiant_amount,0,',',' ') }} FCFA</div>
             </div>
@@ -209,7 +231,9 @@
 
             @if($edition->bourse_lycee_amount)
             <div class="sp-bourse-card">
-                <div class="sp-bourse-icon">📚</div>
+                <div class="sp-bourse-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5"/></svg>
+                </span></div>
                 <h4>Lycée / Collège</h4>
                 <div class="sp-bourse-amount">{{ number_format($edition->bourse_lycee_amount,0,',',' ') }} FCFA</div>
             </div>
@@ -217,14 +241,18 @@
 
             @if($edition->bourse_enfant_amount)
             <div class="sp-bourse-card">
-                <div class="sp-bourse-icon">👧</div>
+                <div class="sp-bourse-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-3-3.87"/><path d="M4 21v-2a4 4 0 013-3.87"/><circle cx="12" cy="7" r="4"/></svg>
+                </span></div>
                 <h4>Enfant</h4>
                 <div class="sp-bourse-amount">{{ number_format($edition->bourse_enfant_amount,0,',',' ') }} FCFA</div>
             </div>
             @endif
 
             <div class="sp-bourse-card sp-bourse-libre">
-                <div class="sp-bourse-icon">💛</div>
+                <div class="sp-bourse-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-8-4.35-8-10a5 5 0 0110 0 5 5 0 0110 0c0 5.65-8 10-8 10z"/></svg>
+                </span></div>
                 <h4>Bourse Partielle</h4>
                 <p>Contribuez selon votre cœur</p>
                 <div class="sp-bourse-amount">Libre</div>
@@ -238,7 +266,9 @@
     @endphp
     @if($totalParticipants > 0 || ($edition->participants_geo && count($edition->participants_geo) > 0))
     <div class="sp-section">
-        <div class="sp-section-title">👥 Répartition des participants</div>
+        <div class="sp-section-title"><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M7 21v-2a4 4 0 013-3.87"/><circle cx="12" cy="7" r="4"/></svg>
+        </span> Répartition des participants</div>
         <div class="sp-repartition">
             <div class="sp-rep-card">
                 <h4>Par catégorie</h4>
@@ -278,8 +308,10 @@
     @php
         $totalDepenses = collect($edition->budget_expenses)->sum(fn($e) => ($e['prix_unitaire'] ?? 0) * ($e['quantite'] ?? 1));
     @endphp
-    <div class="sp-section">
-        <div class="sp-section-title">📋 Budget prévisionnel</div>
+        <div class="sp-section">
+        <div class="sp-section-title"><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12h6M9 16h6M7 8h10"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+        </span> Budget prévisionnel</div>
         <table class="sp-budget-table">
             <thead>
                 <tr>
@@ -310,14 +342,18 @@
 
     {{-- APPORTS EN NATURE --}}
     @if($edition->nature_contributions && count($edition->nature_contributions) > 0)
-    <div class="sp-section">
-        <div class="sp-section-title">📦 Apports en nature</div>
+        <div class="sp-section">
+        <div class="sp-section-title"><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4"/><path d="M21 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7"/></svg>
+        </span> Apports en nature</div>
         <div class="sp-nature-grid">
-            @foreach($edition->nature_contributions as $index => $item)
-                <div class="sp-nature-card">
-                    <div class="sp-nature-num">{{ $index + 1 }}</div>
-                    <p>{{ is_array($item) && isset($item['designation']) ? e($item['designation']) : e($item) }}</p>
-                </div>
+                    @foreach($edition->nature_contributions as $index => $item)
+                        <div class="sp-nature-card">
+                            <div class="sp-nature-num"><span class="sp-icon"> 
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16"/><path d="M6 8v8"/><path d="M18 8v8"/></svg>
+                            </span>{{ $index + 1 }}</div>
+                            <p>{!! is_array($item) && isset($item['designation']) ? html_entity_decode(e($item['designation'])) : html_entity_decode(e($item)) !!}</p>
+                        </div>
             @endforeach
         </div>
     </div>
@@ -325,12 +361,16 @@
 
     {{-- MOYENS DE PAIEMENT --}}
     @if($edition->payment_flooz || $edition->payment_mixx || $edition->payment_account_name || $edition->payment_paypal)
-    <div class="sp-section">
-        <div class="sp-section-title">💳 Comment contribuer ?</div>
+        <div class="sp-section">
+        <div class="sp-section-title"><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        </span> Comment contribuer ?</div>
         <div class="sp-payment-grid">
             @if($edition->payment_flooz)
             <div class="sp-payment-card">
-                <div class="sp-payment-icon">📱</div>
+                <div class="sp-payment-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 00-2-2h-3l-2-3H10L8 6H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2z"/></svg>
+                </span></div>
                 <h4>Flooz</h4>
                 <p>{{ e($edition->payment_flooz) }}</p>
             </div>
@@ -338,7 +378,9 @@
 
             @if($edition->payment_mixx)
             <div class="sp-payment-card">
-                <div class="sp-payment-icon">📱</div>
+                <div class="sp-payment-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 00-2-2h-3l-2-3H10L8 6H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2z"/></svg>
+                </span></div>
                 <h4>Mixx by YAS</h4>
                 <p>{{ e($edition->payment_mixx) }}</p>
             </div>
@@ -346,7 +388,9 @@
 
             @if($edition->payment_account_name || $edition->payment_account_number)
             <div class="sp-payment-card">
-                <div class="sp-payment-icon">🏦</div>
+                <div class="sp-payment-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M4 10h16v11H4z"/><path d="M12 4l8 6H4l8-6z"/></svg>
+                </span></div>
                 <h4>Virement bancaire</h4>
                 @if($edition->payment_account_name)
                     <p><strong>Compte :</strong> {{ e($edition->payment_account_name) }}</p>
@@ -362,7 +406,9 @@
 
             @if($edition->payment_paypal)
             <div class="sp-payment-card">
-                <div class="sp-payment-icon">💻</div>
+                <div class="sp-payment-icon"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/><path d="M16 3l-1 4"/><path d="M8 3l1 4"/></svg>
+                </span></div>
                 <h4>PayPal</h4>
                 <p><a class="sp-payment-btn" href="{{ e($edition->payment_paypal) }}" target="_blank" rel="noopener">Contribuer via PayPal →</a></p>
             </div>
@@ -374,13 +420,19 @@
     {{-- CONTACT --}}
     @if($edition->sponsoring_contact_phone || $edition->sponsoring_contact_email)
     <div class="sp-section sp-contact">
-        <h3>📞 Nous contacter</h3>
+        <h3><span class="sp-icon"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92V21a2 2 0 01-2 2 19 19 0 01-8.63-2.56A19 19 0 013.3 8.63 19 19 0 016.58 3 2 2 0 018.6 1h3.09a2 2 0 012 1.72c.12.86.54 2.24.9 3.3a2 2 0 01-.45 2.11L12.7 10.7"/></svg>
+        </span> Nous contacter</h3>
         <div class="sp-contact-items">
             @if($edition->sponsoring_contact_phone)
-                <div class="sp-contact-item"><span>📞</span> {{ e($edition->sponsoring_contact_phone) }}</div>
+                <div class="sp-contact-item"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92V21a2 2 0 01-2 2 19 19 0 01-8.63-2.56A19 19 0 013.3 8.63 19 19 0 016.58 3 2 2 0 018.6 1h3.09a2 2 0 012 1.72c.12.86.54 2.24.9 3.3a2 2 0 01-.45 2.11L12.7 10.7"/></svg>
+                </span> {{ e($edition->sponsoring_contact_phone) }}</div>
             @endif
             @if($edition->sponsoring_contact_email)
-                <div class="sp-contact-item"><span>✉️</span> <a href="mailto:{{ e($edition->sponsoring_contact_email) }}">{{ e($edition->sponsoring_contact_email) }}</a></div>
+                <div class="sp-contact-item"><span class="sp-icon"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l9 6 9-6"/><path d="M21 8v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8"/></svg>
+                </span> <a href="mailto:{{ e($edition->sponsoring_contact_email) }}">{{ e($edition->sponsoring_contact_email) }}</a></div>
             @endif
         </div>
     </div>
