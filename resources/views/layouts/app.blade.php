@@ -25,7 +25,7 @@
             ▶ Youtube
         </a>
         <span>
-            📞 +228 91 58 15 96 / 90 21 22 42 / 97 04 45 98
+            📞 +228 93745959 / +228 99323206 
         </span>
     </div>
 </div>
@@ -101,7 +101,7 @@
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Jeunesse en Jésus</h3>
             <p>Doulassame, côté sud<br>Clôture université de Lomé</p>
-            <p>📞 +228 91 58 15 96 /<br>90 21 22 42 / 97 04 45 98</p>
+            <p>📞 +228 93745959  /<br>+228 99323206 </p>
         </div>
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Liens rapides</h3>
