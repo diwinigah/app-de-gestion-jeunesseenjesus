@@ -392,7 +392,7 @@ a {
         border-radius: 4px !important;
         font-size: 1.3rem !important;
         cursor: pointer !important;
-        color: #333 !important;
+        color: #E8490F !important;
     }
 
     .j2-header {
@@ -462,7 +462,7 @@ a {
         width: 40px !important;
         height: 40px !important;
         background: none !important;
-        border: 1px solid #ddd !important;
+        border: 1px solid #E8490F  !important;
         border-radius: 4px !important;
         font-size: 1.3rem !important;
         cursor: pointer !important;
