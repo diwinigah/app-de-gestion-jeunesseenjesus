@@ -55,7 +55,17 @@
                 </li>
                 <li>
                     <a href="{{ url('/camp') }}" class="j2-nav-link {{ request()->is('camp*') ? 'active' : '' }}">
-                        Inscription Evénement
+                        Inscription CIVA
+                    </a>
+                </li>
+                 <li>
+                    <a href="{{ url('/inscrits') }}" class="j2-nav-link {{ request()->is('inscrits*') ? 'active' : '' }}">
+                        Liste des inscrits
+                    </a>
+                </li>
+                  <li>
+                    <a href="{{ route('sponsoring.index') }}" class="j2-nav-link {{ request()->is('sponsoring*') ? 'active' : '' }}">
+                        Sponsoring
                     </a>
                 </li>
                 <li>
@@ -68,16 +78,8 @@
                         Partenaires
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('sponsoring.index') }}" class="j2-nav-link {{ request()->is('sponsoring*') ? 'active' : '' }}">
-                        Sponsoring
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/inscrits') }}" class="j2-nav-link {{ request()->is('inscrits*') ? 'active' : '' }}">
-                        Liste des inscrits
-                    </a>
-                </li>
+              
+               
             </ul>
 
             <!-- Bouton hamburger mobile -->
