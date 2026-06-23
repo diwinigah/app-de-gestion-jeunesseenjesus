@@ -29,6 +29,12 @@ class CampEdition extends Model
         'is_active',
         'show_days_presence', 'show_children_count', 'show_bus_departure',
         'show_participant_type',
+        // Activités et inscription
+        'activities_link_label',
+        'activities_link_url',
+        'registration_mode',
+        'external_registration_label',
+        'external_registration_url',
         // Sponsoring
         'sponsoring_theme', 'sponsoring_intro', 'sponsoring_verse', 'show_sponsoring_page',
         'sponsoring_salutation',
@@ -57,6 +63,7 @@ class CampEdition extends Model
         'show_children_count' => 'boolean',
         'show_bus_departure' => 'boolean',
         'show_participant_type' => 'boolean',
+        'registration_mode' => 'string',
         // Sponsoring
         'show_sponsoring_page' => 'boolean',
         'budget_total' => 'integer',

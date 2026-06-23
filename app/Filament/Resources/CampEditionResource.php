@@ -10,7 +10,9 @@ use App\Filament\Resources\CampEditionResource\RelationManagers;
 use App\Models\CampEdition;
 use App\Services\CampEditionService;
 use Filament\Forms;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -147,6 +149,53 @@ class CampEditionResource extends Resource
                             ->default(false),
                     ])
                     ->columnSpanFull(),
+
+                Forms\Components\Section::make('Lien activités du camp')
+                    ->description('Affiché sur la page d\'inscription après la description — visible quelle que soit la méthode d\'inscription')
+                    ->schema([
+                        Forms\Components\TextInput::make('activities_link_label')
+                            ->label('Titre du lien')
+                            ->placeholder('ex: Programme et activités du camp CIVA 2026')
+                            ->nullable()
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('activities_link_url')
+                            ->label('URL du lien')
+                            ->url()
+                            ->placeholder('https://...')
+                            ->nullable()
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Méthode d\'inscription')
+                    ->description('Choisissez comment les participants s\'inscrivent')
+                    ->schema([
+                        Radio::make('registration_mode')
+                            ->label('Mode d\'inscription')
+                            ->options([
+                                'internal' => 'Formulaire interne (actuel)',
+                                'external' => 'Lien externe (Google Form ou autre)',
+                            ])
+                            ->default('internal')
+                            ->inline()
+                            ->columnSpanFull(),
+
+                        Forms\Components\TextInput::make('external_registration_label')
+                            ->label('Texte du bouton d\'inscription externe')
+                            ->placeholder('ex: S\'inscrire via Google Form')
+                            ->nullable()
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get) => $get('registration_mode') === 'external'),
+
+                        Forms\Components\TextInput::make('external_registration_url')
+                            ->label('Lien vers le formulaire externe')
+                            ->url()
+                            ->placeholder('https://docs.google.com/forms/...')
+                            ->nullable()
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get) => $get('registration_mode') === 'external'),
+                    ])
+                    ->collapsible(),
                 // Section 'Page de Sponsoring' retirée et déplacée vers une Resource dédiée `SponsoringResource`.
             ]);
     }
