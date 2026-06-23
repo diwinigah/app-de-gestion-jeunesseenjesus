@@ -59,6 +59,18 @@
     border-bottom: 2px solid #f0e8e4;
 }
 
+/* Description d'édition */
+.registration-page .edition-description {
+    font-size: 0.95rem;
+    color: #3D2B1F;
+    line-height: 1.6;
+    margin-top: 1rem;
+    padding: 1rem 0;
+    border-top: 2px solid #f0e8e4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 /* Séparateur de sections */
 .form-section-title {
     font-size: 0.8rem;
@@ -333,13 +345,16 @@ textarea.form-input {
 <div class="reg-header">
     <h1>Inscription Evenement</h1>
     <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>
+    @if($edition->description)
+        <div class="edition-description">{{ $edition->description }}</div>
+    @endif
 </div>
 
 @if ($errors->any() && session('_old_input'))
     <div class="form-errors-block">Merci de corriger les champs indiques.</div>
 @endif
 
-<form method="POST" action="{{ route('registration.store') }}" class="registration-card">
+<form method="POST" action="{{ route('registration.store') }}" class="registration-card" data-recaptcha>
     @csrf
 
     <div class="form-grid-2">
@@ -390,8 +405,7 @@ textarea.form-input {
             @if ($errors->has('phone') && session('_old_input')) <div class="form-error">{{ $errors->first('phone') }}</div> @endif
             <p class="form-helper">
                 📞 Indicatif international accepté (ex: +228, +33).<br>
-                <strong>NB :</strong> Numéro valide exigé pour
-                la finalisation du paiement et de l'inscription.
+                <strong>NB: Numéro valide exigé .</strong>
             </p>
         </div>
 
@@ -461,6 +475,7 @@ textarea.form-input {
     @endif
 
     <div style="margin-top:20px">
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
         <button
             type="submit"
             id="submit-btn"

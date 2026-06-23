@@ -128,7 +128,8 @@ class CampEditionResource extends Resource
                             ->label('Description')
                             ->placeholder('Informations internes ou publiques sur cette edition')
                             ->rows(5),
-                    ]),
+                    ])
+                    ->columnSpanFull(),
                 Forms\Components\Section::make('Champs optionnels du formulaire public')
                     ->description('Activez les champs supplémentaires à afficher lors de l\'inscription')
                     ->schema([
