@@ -571,7 +571,9 @@
                 </span></div>
                 <h4>{{ $edition->bourse_pleine_label }}</h4>
                 <p>{{ $edition->bourse_pleine_desc }}</p>
-                <div class="sp-bourse-amount">{{ number_format($edition->bourse_pleine_amount ?? 0, 0, ',', ' ') }} FCFA <small>par campeur</small></div>
+                @if($edition->bourse_pleine_amount !== null)
+                <div class="sp-bourse-amount">{{ number_format($edition->bourse_pleine_amount, 0, ',', ' ') }} FCFA <small>par campeur</small></div>
+                @endif
             </div>
             @endif
 
@@ -597,28 +599,28 @@
         </span> {{ $edition->title_frais ?: 'Frais de participation par catégorie' }}</div>
 
         <div class="sp-categorie-grid">
-            @if($edition->bourse_adulte_amount > 0 && $edition->categorie_adulte_label)
+            @if($edition->bourse_adulte_amount !== null && $edition->bourse_adulte_amount > 0 && $edition->categorie_adulte_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_adulte_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_adulte_amount, 0, ',', ' ') }} FCFA</div>
                 </div>
             @endif
 
-            @if($edition->bourse_etudiant_amount > 0 && $edition->categorie_etudiant_label)
+            @if($edition->bourse_etudiant_amount !== null && $edition->bourse_etudiant_amount > 0 && $edition->categorie_etudiant_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_etudiant_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_etudiant_amount, 0, ',', ' ') }} FCFA</div>
                 </div>
             @endif
 
-            @if($edition->bourse_lycee_amount > 0 && $edition->categorie_lycee_label)
+            @if($edition->bourse_lycee_amount !== null && $edition->bourse_lycee_amount > 0 && $edition->categorie_lycee_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_lycee_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_lycee_amount, 0, ',', ' ') }} FCFA</div>
                 </div>
             @endif
 
-            @if($edition->bourse_enfant_amount > 0 && $edition->categorie_enfant_label)
+            @if($edition->bourse_enfant_amount !== null && $edition->bourse_enfant_amount > 0 && $edition->categorie_enfant_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_enfant_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_enfant_amount, 0, ',', ' ') }} FCFA</div>

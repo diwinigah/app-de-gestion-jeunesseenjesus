@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -314,8 +315,12 @@ class CampEditionResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->label('Supprimer'),
+                    DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->label('Supprimer la sélection')
+                        ->modalHeading('Supprimer les éléments sélectionnés')
+                        ->modalDescription('Cette action est irréversible. Êtes-vous sûr de vouloir supprimer les éléments sélectionnés ?')
+                        ->modalSubmitActionLabel('Oui, supprimer'),
                 ]),
             ])
             ->defaultSort('year', 'desc');

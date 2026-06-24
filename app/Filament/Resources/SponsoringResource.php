@@ -16,7 +16,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -333,6 +336,17 @@ class SponsoringResource extends Resource
             ])
             ->actions([
                 \Filament\Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->label('Supprimer la sélection')
+                        ->modalHeading('⚠️ Supprimer les éditions sélectionnées')
+                        ->modalDescription('ATTENTION : La suppression d\'une édition supprimera également toutes les inscriptions associées. Cette action est irréversible.')
+                        ->modalSubmitActionLabel('Oui, supprimer définitivement')
+                        ->color('danger'),
+                ]),
             ])
             ->defaultSort('year', 'desc');
     }
