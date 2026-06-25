@@ -34,7 +34,7 @@
 
 @section('content')
 <div class="part-idx-header">
-    <div class="part-idx-eyebrow">Jeunesse en Jésus</div>
+    <div class="part-idx-eyebrow">Partenaires</div>
     <h1 class="part-idx-h1">Nos partenaires</h1>
     <p class="part-idx-lead">Découvrez les organisations et entreprises qui soutiennent nos initiatives et accompagnent notre mission.</p>
 </div>

@@ -34,7 +34,7 @@
 
 @section('content')
 <header class="proj-header">
-    <div class="proj-eyebrow">Jeunesse en Jésus</div>
+    <div class="proj-eyebrow">Projets</div>
     <h1 class="proj-h1">Projets à financer</h1>
     <p class="proj-lead">Découvrez les projets publiés et accompagnez ceux qui construisent l'avenir de Jeunesse en Jésus.</p>
 </header>
