@@ -14,6 +14,8 @@
     <title>@yield('title', 'Jeunesse en Jésus')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/j2-theme.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @stack('styles')
 </head>
 <body>
@@ -21,12 +23,27 @@
 <!-- TOPBAR sombre -->
 <div class="j2-topbar">
     <div class="j2-topbar-inner">
-        <a href="https://www.youtube.com/channel/UC9EJNZo1McDNuKlbdIuZRXg" target="_blank">
-            ▶ Youtube
+
+        <a href="https://www.youtube.com/channel/UC9EJNZo1McDNuKlbdIuZRXg" target="_blank" title="YouTube">
+            <i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube
         </a>
-        <span>
-            📞 +228 93745959 / +228 99323206 
-        </span>
+
+        <a href="LIEN_FACEBOOK_ICI" target="_blank" title="Facebook">
+            <i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook
+        </a>
+
+        <a href="https://whatsapp.com/channel/LIEN_ICI" target="_blank" title="WhatsApp">
+            <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp
+        </a>
+
+        <a href="tel:+22893745959" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#ffffff;"></i> +228 93745959
+        </a>
+
+        <a href="tel:+22899323206" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#ffffff;"></i> +228 99323206
+        </a>
+
     </div>
 </div>
 
@@ -55,7 +72,7 @@
                 </li>
                 <li>
                     <a href="{{ url('/camp') }}" class="j2-nav-link {{ request()->is('camp*') ? 'active' : '' }}">
-                        Inscription CIVA
+                        Inscription 
                     </a>
                 </li>
                  <li>
@@ -137,7 +154,14 @@
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Jeunesse en Jésus</h3>
             <p>Doulassame, côté sud<br>Clôture université de Lomé</p>
-            <p>📞 +228 93745959  /<br>+228 99323206 </p>
+            <p>     <a href="tel:+22893745959" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#E8490F;"></i> +228 93745959
+        </a>
+            <br>
+        <a href="tel:+22899323206" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#E8490F;"></i> +228 99323206
+        </a>
+            </p>
         </div>
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Liens rapides</h3>
@@ -182,9 +206,14 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: #333333;
     background: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
 }
 
 a {
