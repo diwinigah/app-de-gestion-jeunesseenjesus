@@ -51,7 +51,7 @@
                 $progress = $projectService->getProgressPercentage($project);
             @endphp
 
-            <article class="proj-card">
+            <article class="proj-card animate-left">
                 @if ($project->featured_image_path)
                     <img src="{{ asset('storage/' . $project->featured_image_path) }}" alt="{{ $project->title }}">
                 @else
