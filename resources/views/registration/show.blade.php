@@ -407,7 +407,7 @@ textarea.form-input {
     </div>
 @endif
 <div class="reg-header">
-    <h1>Inscription Evenement</h1>
+    <h1>{{ $edition->registration_page_title ?: 'Inscription Evenement' }}</h1>
     <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>
     @if($edition->description)
         <div class="edition-description">{{ $edition->description }}</div>
