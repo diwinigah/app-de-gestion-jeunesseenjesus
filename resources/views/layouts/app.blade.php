@@ -703,6 +703,31 @@ a {
     opacity: 1;
     transform: translate(0);
 }
+
+.password-field-wrapper {
+    position: relative;
+    width: 100%;
+}
+.password-field-wrapper .form-input {
+    padding-right: 2.75rem;
+    width: 100%;
+}
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    color: #aaa;
+    transition: color 0.2s;
+}
+.password-toggle:hover { color: #E8490F; }
+.eye-icon { width: 20px; height: 20px; }
 </style>
 
 <script>
@@ -728,6 +753,27 @@ document.addEventListener('click', function (e) {
         document.getElementById('investorMenu')?.classList.remove('is-open');
     }
 });
+
+function togglePassword(fieldId) {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+
+    const btn = input.parentElement.querySelector('.password-toggle');
+    if (!btn) return;
+
+    const open = btn.querySelector('.eye-open');
+    const closed = btn.querySelector('.eye-closed');
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        open.style.display = 'none';
+        closed.style.display = 'block';
+    } else {
+        input.type = 'password';
+        open.style.display = 'block';
+        closed.style.display = 'none';
+    }
+}
 </script>
 
 @if(config('services.recaptcha.site_key'))
