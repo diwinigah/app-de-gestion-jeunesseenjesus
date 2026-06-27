@@ -576,14 +576,11 @@ textarea.form-input {
     @endif
 
     <div style="margin-top:20px">
-        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" value="">
         <button
             type="submit"
             id="submit-btn"
-            class="form-submit-btn"
-            onclick="this.disabled=true;
-                     this.innerText='Envoi en cours...';
-                     this.form.submit();">
+            class="form-submit-btn">
             Envoyer l'inscription
         </button>
     </div>

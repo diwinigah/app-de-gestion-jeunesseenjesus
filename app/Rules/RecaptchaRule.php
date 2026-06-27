@@ -22,8 +22,13 @@ class RecaptchaRule implements ValidationRule
             return;
         }
 
+        // En dev ou si le JS n'a pas pu injecter le token, ne pas afficher d'erreur visible.
+        if (empty($value)) {
+            return;
+        }
+
         try {
-            $response = Http::post('https://www.google.com/recaptcha/api/siteverify', [
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret'   => config('services.recaptcha.secret_key'),
                 'response' => $value,
                 'remoteip' => request()->ip(),
@@ -32,7 +37,7 @@ class RecaptchaRule implements ValidationRule
             $result = $response->json();
 
             if (!($result['success'] ?? false) || ($result['score'] ?? 0) < 0.5) {
-                $fail('Veuillez confirmer que vous n\'êtes pas un robot.');
+                $fail('La vérification de sécurité a échoué. Veuillez réessayer.');
             }
         } catch (\Exception $e) {
             // Mode gracieux : en cas d'erreur de vérification, ne pas bloquer

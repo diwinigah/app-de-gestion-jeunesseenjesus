@@ -32,7 +32,7 @@ class StorePartnerRequestRequest extends FormRequest
             'type' => ['nullable', 'in:church,company,association,individual,other'],
             'website_url' => ['nullable', 'url', 'max:500'],
             'message' => ['nullable', 'string', 'max:2000'],
-            'g-recaptcha-response' => ['required_with:g-recaptcha-response', new RecaptchaRule()],
+            'g-recaptcha-response' => ['nullable', new RecaptchaRule()],
         ];
     }
 
@@ -58,7 +58,6 @@ class StorePartnerRequestRequest extends FormRequest
             'website_url.url' => 'L\'URL du site doit être valide.',
             'website_url.max' => 'L\'URL du site ne doit pas dépasser 500 caractères.',
             'message.string' => 'Le message doit être un texte.',
-            'g-recaptcha-response.required_with' => 'Veuillez confirmer que vous n\'êtes pas un robot.',
             'message.max' => 'Le message ne doit pas dépasser 2000 caractères.',
         ];
     }

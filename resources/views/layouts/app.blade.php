@@ -734,20 +734,34 @@ document.addEventListener('click', function (e) {
 <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const forms = document.querySelectorAll('form[data-recaptcha]');
-    forms.forEach(function (form) {
-        form.addEventListener('submit', function (e) {
-            const tokenField = form.querySelector('[name="g-recaptcha-response"]');
-            if (tokenField && !tokenField.value) {
-                e.preventDefault();
-                grecaptcha.ready(function () {
-                    grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', { action: 'submit' })
-                        .then(function (token) {
-                            tokenField.value = token;
-                            form.submit();
-                        });
-                });
-            }
+    const SITE_KEY = '{{ config('services.recaptcha.site_key') }}';
+
+    // Attendre que grecaptcha soit pret
+    grecaptcha.ready(function () {
+
+        // Cibler tous les formulaires avec data-recaptcha
+        const forms = document.querySelectorAll('form[data-recaptcha]');
+
+        forms.forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Bloquer la soumission immediate
+
+                const tokenField = form.querySelector('[name="g-recaptcha-response"]');
+                if (!tokenField) {
+                    form.submit(); // Pas de champ cache -> soumettre normalement
+                    return;
+                }
+
+                // Generer le token reCAPTCHA v3
+                grecaptcha.execute(SITE_KEY, { action: 'submit' })
+                    .then(function (token) {
+                        tokenField.value = token;
+                        form.submit(); // Soumettre apres avoir injecte le token
+                    })
+                    .catch(function () {
+                        form.submit(); // En cas d'erreur -> soumettre quand meme
+                    });
+            });
         });
     });
 });

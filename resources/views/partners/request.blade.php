@@ -45,8 +45,11 @@
             <div class="part-req-errors">
                 <strong>Erreurs détectées :</strong>
                 <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                    @foreach ($errors->getMessages() as $field => $fieldErrors)
+                        @continue($field === 'g-recaptcha-response')
+                        @foreach ($fieldErrors as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
                     @endforeach
                 </ul>
             </div>
@@ -185,14 +188,11 @@
             </div>
 
             <div class="part-req-btn-group">
-                <input type="hidden" id="g-recaptcha-response-partner" name="g-recaptcha-response">
+                <input type="hidden" id="g-recaptcha-response-partner" name="g-recaptcha-response" value="">
                 <button
                     type="submit"
                     id="submit-btn"
-                    class="part-req-btn primary"
-                    onclick="this.disabled=true;
-                             this.innerText='Envoi en cours...';
-                             this.form.submit();">
+                    class="part-req-btn primary">
                     Soumettre la demande
                 </button>
                 <a href="{{ route('partners.index') }}" class="part-req-btn secondary">Annuler</a>

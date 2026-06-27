@@ -61,7 +61,7 @@ class StoreRegistrationRequest extends FormRequest
                 Rule::in(['eleve', 'etudiant', 'adulte']),
             ],
 
-            'g-recaptcha-response' => ['required_with:g-recaptcha-response', new RecaptchaRule()],
+            'g-recaptcha-response' => ['nullable', new RecaptchaRule()],
         ];
     }
 
@@ -85,7 +85,6 @@ class StoreRegistrationRequest extends FormRequest
             'days_presence.required'    => 'Veuillez indiquer vos jours de présence.',
             'bus_departure.required'    => 'Veuillez indiquer si vous partez avec le bus.',
             'participant_type.required' => 'Veuillez indiquer votre statut (Élève, Étudiant ou Adulte).',
-            'g-recaptcha-response.required_with' => 'Veuillez confirmer que vous n\'êtes pas un robot.',
         ];
     }
 
