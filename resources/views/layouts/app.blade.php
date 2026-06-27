@@ -285,7 +285,7 @@ a {
     transition: color 0.3s ease;
      color: inherit;
     text-decoration: none;
-     font-size: 1.8rem;
+     font-size: 1.4rem;
     font-weight: 700;
     color:  #504d4c;
     font-family: -apple-system,
@@ -731,13 +731,13 @@ document.addEventListener('click', function (e) {
 </script>
 
 @if(config('services.recaptcha.site_key'))
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const forms = document.querySelectorAll('form[data-recaptcha]');
     forms.forEach(function (form) {
         form.addEventListener('submit', function (e) {
-            const tokenField = form.querySelector('#g-recaptcha-response');
+            const tokenField = form.querySelector('[name="g-recaptcha-response"]');
             if (tokenField && !tokenField.value) {
                 e.preventDefault();
                 grecaptcha.ready(function () {
