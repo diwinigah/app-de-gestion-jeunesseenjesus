@@ -21,6 +21,10 @@ class InvestorAuthController extends Controller
 
     public function showRegister(): View
     {
+        if (request()->filled('redirect')) {
+            session()->put('investor.redirect', request('redirect'));
+        }
+
         return view('investor.register');
     }
 
@@ -30,11 +34,17 @@ class InvestorAuthController extends Controller
 
         Auth::guard('investor')->login($investor);
 
-        return redirect()->intended('/projets');
+        $redirectUrl = $this->redirectUrlAfterAuth($request);
+
+        return redirect()->to($redirectUrl);
     }
 
     public function showLogin(): View
     {
+        if (request()->filled('redirect')) {
+            session()->put('investor.redirect', request('redirect'));
+        }
+
         return view('investor.login');
     }
 
@@ -52,7 +62,9 @@ class InvestorAuthController extends Controller
             \Illuminate\Support\Facades\RateLimiter::clear('login_' . $request->email);
             $request->session()->regenerate();
 
-            return redirect()->intended('/projets');
+            $redirectUrl = $this->redirectUrlAfterAuth($request);
+
+            return redirect()->to($redirectUrl);
         }
 
         \Illuminate\Support\Facades\RateLimiter::hit('login_' . $request->email, 60);
@@ -85,5 +97,16 @@ class InvestorAuthController extends Controller
         return view('investor.dashboard', [
             'investments' => $investments,
         ]);
+    }
+
+    private function redirectUrlAfterAuth(InvestorLoginRequest|InvestorRegisterRequest $request): string
+    {
+        $redirectUrl = $request->query('redirect', session()->pull('investor.redirect', route('investor.dashboard')));
+
+        if (! is_string($redirectUrl) || ! str_starts_with($redirectUrl, url('/'))) {
+            return route('investor.dashboard');
+        }
+
+        return $redirectUrl;
     }
 }

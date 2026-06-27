@@ -18,15 +18,15 @@ class InvestorController extends Controller
     {
     }
 
-    public function showInvestForm(Project $project): View|RedirectResponse
+    public function showInvestForm(Project $project): View
     {
-        if (! Auth::guard('investor')->check()) {
-            session()->put('url.intended', route('projects.invest.form', ['project' => $project->slug]));
-
-            return redirect()->guest(route('investor.login'));
+        if (Auth::guard('investor')->check()) {
+            return view('investor.invest', [
+                'project' => $project,
+            ]);
         }
 
-        return view('investor.invest', [
+        return view('investor.invest-gate', [
             'project' => $project,
         ]);
     }
