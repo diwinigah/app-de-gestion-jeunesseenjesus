@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Enums\Gender;
 use App\Rules\RecaptchaRule;
 use App\Services\CampEditionService;
 use App\Services\RegistrationService;
@@ -28,10 +27,10 @@ class StoreRegistrationRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
-            'gender' => ['required', Rule::enum(Gender::class)],
+            'gender' => ['required', Rule::in(['male', 'female'])],
             'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'whatsapp_phone' => ['nullable', 'string', 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
-            'city' => ['nullable', 'string', 'max:150'],
+            'city' => ['required', 'string', 'max:150'],
             'edition_section_id' => [
                 'nullable',
                 'integer',

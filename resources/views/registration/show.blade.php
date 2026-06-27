@@ -479,7 +479,6 @@ textarea.form-input {
                 <option value="">Choisir</option>
                 <option value="male" @selected(old('gender') === 'male')>Homme</option>
                 <option value="female" @selected(old('gender') === 'female')>Femme</option>
-                <option value="other" @selected(old('gender') === 'other')>Autre</option>
             </select>
             @if ($errors->has('gender') && session('_old_input')) <div class="form-error">{{ $errors->first('gender') }}</div> @endif
         </div>
@@ -519,8 +518,8 @@ textarea.form-input {
     </div>
 
     <div class="form-group animate-left" style="margin-top:16px">
-        <label for="city" class="form-label">Ville</label>
-        <input id="city" name="city" value="{{ old('city') }}" autocomplete="address-level2" class="reg-input form-input">
+        <label for="city" class="form-label">Ville <span class="form-required">*</span></label>
+        <input id="city" name="city" value="{{ old('city') }}" autocomplete="address-level2" class="reg-input form-input" required>
         @if ($errors->has('city') && session('_old_input')) <div class="form-error">{{ $errors->first('city') }}</div> @endif
     </div>
 
