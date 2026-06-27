@@ -7,10 +7,13 @@ namespace App\Models;
 use App\Enums\Gender;
 use App\Enums\PaymentStatus;
 use App\Enums\RegistrationStatus;
+use App\Models\CampEdition;
+use App\Services\RegistrationService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 class Registration extends Model
 {
@@ -82,9 +85,54 @@ class Registration extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (self $registration): void {
+            if ($registration->submitted_at === null) {
+                $registration->submitted_at = Carbon::now();
+            }
+
+            if ($registration->registration_number === null) {
+                $registration->registration_number = self::generateRegistrationNumberForEditionId($registration->camp_edition_id);
+            }
+
+            if ($registration->total_amount === null) {
+                $registration->setAttribute('total_amount', 0);
+            }
+
+            if ($registration->paid_amount === null) {
+                $registration->setAttribute('paid_amount', 0);
+            }
+
+            if ($registration->remaining_amount === null) {
+                $registration->setAttribute('remaining_amount', 0);
+            }
+
+            if ($registration->payment_status === null) {
+                $registration->payment_status = PaymentStatus::Unpaid;
+            }
+
+            if ($registration->registration_status === null) {
+                $registration->registration_status = RegistrationStatus::Pending;
+            }
+        });
+
         static::deleting(function (self $registration): void {
             $registration->payments()->delete();
         });
+    }
+
+    protected static function generateRegistrationNumberForEditionId(int|string|null $editionId): ?string
+    {
+        if ($editionId === null || $editionId === '') {
+            return null;
+        }
+
+        $edition = CampEdition::query()->find((int) $editionId);
+
+        if ($edition === null) {
+            return null;
+        }
+
+        return app(RegistrationService::class)->generateRegistrationNumber($edition);
     }
 
     public function scopeByEdition(Builder $query, int|CampEdition $edition): Builder

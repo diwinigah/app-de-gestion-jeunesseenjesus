@@ -73,14 +73,10 @@ class RegistrationResource extends Resource
 
                         Forms\Components\Select::make('payment_status')
                             ->label('Statut paiement')
-                            ->options([
-                                PaymentStatus::Unpaid->value => 'Non payé',
-                                PaymentStatus::Partial->value => 'Partiel',
-                                PaymentStatus::Paid->value => 'Payé',
-                            ])
+                            ->options(PaymentStatus::class)
+                            ->default(PaymentStatus::Unpaid)
                             ->disabled()
-                            ->dehydrated(false)
-                            ->formatStateUsing(fn (PaymentStatus|string|null $state): string => $state === null ? '-' : self::paymentStatusLabel($state)),
+                            ->dehydrated(false),
                     ])
                     ->columns(4),
 
@@ -91,7 +87,11 @@ class RegistrationResource extends Resource
                             ->options(fn (): array => CampEdition::query()->orderByDesc('year')->pluck('name', 'id')->all())
                             ->required()
                             ->native(false)
-                            ->live(),
+                            ->live()
+                            ->reactive()
+                            ->afterStateUpdated(function (?int $state, Set $set): void {
+                                $set('registration_number', self::generateRegistrationNumberForEdition($state));
+                            }),
                         Forms\Components\Select::make('edition_section_id')
                             ->label('Section')
                             ->helperText('Facultatif — laisser vide si invité')
@@ -101,7 +101,10 @@ class RegistrationResource extends Resource
                         Forms\Components\TextInput::make('registration_number')
                             ->label('Numero')
                             ->required()
-                            ->maxLength(50),
+                            ->maxLength(50)
+                            ->disabled()
+                            ->reactive()
+                            ->default(fn (Get $get): ?string => self::generateRegistrationNumberForEdition($get('camp_edition_id'))),
                     ])
                     ->columns(3),
 
@@ -205,11 +208,8 @@ class RegistrationResource extends Resource
                             }),
                         Forms\Components\Select::make('payment_status')
                             ->label('Statut de paiement')
-                            ->options([
-                                PaymentStatus::Unpaid->value => 'Non payé',
-                                PaymentStatus::Partial->value => 'Partiel',
-                                PaymentStatus::Paid->value => 'Payé',
-                            ])
+                            ->options(PaymentStatus::class)
+                            ->default(PaymentStatus::Unpaid)
                             ->dehydrated(true)
                             ->live()
                             ->afterStateHydrated(function ($component, $record) {
@@ -256,6 +256,21 @@ class RegistrationResource extends Resource
                     ])
                     ->columnSpanFull(),
             ]);
+    }
+
+    protected static function generateRegistrationNumberForEdition(?int $editionId): ?string
+    {
+        if ($editionId === null) {
+            return null;
+        }
+
+        $edition = CampEdition::query()->find($editionId);
+
+        if ($edition === null) {
+            return null;
+        }
+
+        return app(RegistrationService::class)->generateRegistrationNumber($edition);
     }
 
     public static function table(Table $table): Table

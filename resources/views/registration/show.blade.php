@@ -589,3 +589,55 @@ textarea.form-input {
 </div>
 @endsection
 
+@push('scripts')
+<script>
+// Animation bannière, titre, description — au chargement uniquement
+(function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const banner = document.querySelector('.form-cover-banner');
+    const title  = document.querySelector('.reg-header h1');
+    const desc   = document.querySelector('.edition-description');
+
+    // Bannière — zoom depuis légèrement agrandi
+    if (banner) {
+        banner.style.opacity = '0';
+        banner.style.transform = 'scale(1.03)';
+        banner.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        requestAnimationFrame(function () {
+            setTimeout(function () {
+                banner.style.opacity = '1';
+                banner.style.transform = 'scale(1)';
+            }, 80);
+        });
+    }
+
+    // Titre — glisse depuis le haut
+    if (title) {
+        title.style.opacity = '0';
+        title.style.transform = 'translateY(-18px)';
+        title.style.transition = 'opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s';
+        requestAnimationFrame(function () {
+            setTimeout(function () {
+                title.style.opacity = '1';
+                title.style.transform = 'translateY(0)';
+            }, 80);
+        });
+    }
+
+    // Description — glisse depuis le bas avec léger délai
+    if (desc) {
+        desc.style.opacity = '0';
+        desc.style.transform = 'translateY(14px)';
+        desc.style.transition = 'opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s';
+        requestAnimationFrame(function () {
+            setTimeout(function () {
+                desc.style.opacity = '1';
+                desc.style.transform = 'translateY(0)';
+            }, 80);
+        });
+    }
+})();
+</script>
+@endpush
+
