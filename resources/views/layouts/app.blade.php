@@ -134,8 +134,10 @@
             </ul>
 
             <!-- Bouton hamburger mobile -->
-            <button class="j2-hamburger" id="hamburger" aria-label="Menu">
-                ☰
+            <button class="j2-hamburger" id="j2-hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
         </nav>
     </div>
@@ -165,7 +167,7 @@
             <h3 class="j2-footer-title">Liens rapides</h3>
             <ul class="j2-footer-links">
                 <li>
-                    <a href="{{ url('/camp') }}">Inscription Evénement</a>
+                    <a href="{{ url('/camp') }}">Inscription </a>
                 </li>
                 <li>
                     <a href="{{ url('/projets') }}">Projets à financer</a>
@@ -329,9 +331,113 @@ a {
     display: none;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 0;
     cursor: pointer;
     color: #333;
+}
+.j2-hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+/* ═══════════════════════════════════
+   MENU MOBILE — Style template officiel
+═══════════════════════════════════ */
+.j2-mobile-nav {
+    position: fixed;
+    top: 55px;
+    right: 15px;
+    bottom: 15px;
+    left: 15px;
+    z-index: 9999;
+    overflow-y: auto;
+    background: #fff;
+    transition: ease-in-out 0.2s;
+    opacity: 0;
+    visibility: hidden;
+    border-radius: 10px;
+    padding: 10px 0;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+}
+.j2-mobile-nav a {
+    display: block;
+    position: relative;
+    color: #3D2B1F;
+    padding: 10px 20px;
+    font-weight: 500;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    border-bottom: 1px solid #f9f3f0;
+}
+.j2-mobile-nav a:last-of-type {
+    border-bottom: none;
+}
+.j2-mobile-nav a:hover,
+.j2-mobile-nav a.active {
+    color: #E8490F;
+    text-decoration: none;
+}
+.j2-mobile-nav-divider {
+    height: 1px;
+    background: #f0e8e4;
+    margin: 0.25rem 0;
+}
+.j2-mobile-nav-logout {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #e53e3e;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.j2-mobile-nav-logout:hover { color: #c53030; }
+
+/* Overlay sombre */
+.j2-mobile-nav-overly {
+    width: 100%;
+    height: 100%;
+    z-index: 9997;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background: rgba(43, 37, 35, 0.6);
+    display: none;
+    transition: ease-in-out 0.2s;
+}
+
+/* État actif */
+body.j2-mobile-nav-active {
+    overflow: hidden;
+}
+body.j2-mobile-nav-active .j2-mobile-nav {
+    opacity: 1;
+    visibility: visible;
+}
+body.j2-mobile-nav-active .j2-hamburger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+body.j2-mobile-nav-active .j2-hamburger span:nth-child(2) {
+    opacity: 0;
+}
+body.j2-mobile-nav-active .j2-hamburger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Masquer sur desktop */
+@media (min-width: 901px) {
+    .j2-mobile-nav,
+    .j2-mobile-nav-overly { display: none !important; }
 }
 
 /* === INVESTOR DROPDOWN === */
@@ -513,34 +619,6 @@ a {
 @media (max-width: 768px) {
     .j2-nav-list {
         display: none !important;
-        flex-direction: column !important;
-        position: absolute !important;
-        top: 100% !important;
-        left: 0 !important;
-        right: 0 !important;
-        background: #ffffff !important;
-        padding: 16px 20px !important;
-        border-top: 2px solid #E8490F !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
-        z-index: 999 !important;
-        gap: 4px !important;
-    }
-
-    .j2-nav-list.open {
-        display: flex !important;
-    }
-
-    .j2-nav-link {
-        padding: 10px 16px !important;
-        border-radius: 4px !important;
-        width: 100% !important;
-        display: block !important;
-    }
-
-    .j2-nav-link:hover,
-    .j2-nav-link.active {
-        background: #FFF5F2 !important;
-        color: #E8490F !important;
     }
 
     .j2-hamburger {
@@ -549,10 +627,11 @@ a {
         justify-content: center !important;
         width: 40px !important;
         height: 40px !important;
+        flex-direction: column !important;
+        gap: 5px !important;
         background: none !important;
         border: 1px solid #ddd !important;
         border-radius: 4px !important;
-        font-size: 1.3rem !important;
         cursor: pointer !important;
         color: #E8490F !important;
     }
@@ -563,28 +642,6 @@ a {
         z-index: 1000 !important;
         background: #fff !important;
         width: 100% !important;
-    }
-
-    .investor-dropdown { 
-        margin-left: 0 !important; 
-        margin-top: 0.75rem !important; 
-        width: 100% !important; 
-    }
-    .investor-trigger { 
-        width: 100% !important; 
-        justify-content: center !important; 
-    }
-    .investor-name { 
-        max-width: 140px !important; 
-        overflow: hidden !important; 
-        text-overflow: ellipsis !important; 
-        white-space: nowrap !important; 
-    }
-    .investor-menu { 
-        position: static !important; 
-        margin-top: 0.5rem !important; 
-        box-shadow: none !important; 
-        border: 1px solid #f0e8e4 !important; 
     }
 
     .j2-footer-inner {
@@ -606,37 +663,9 @@ a {
 }
 
 /* === TABLET (same behavior as mobile) === */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 900px) {
     .j2-nav-list {
         display: none !important;
-        flex-direction: column !important;
-        position: absolute !important;
-        top: 100% !important;
-        left: 0 !important;
-        right: 0 !important;
-        background: #ffffff !important;
-        padding: 16px 20px !important;
-        border-top: 2px solid #E8490F !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
-        z-index: 999 !important;
-        gap: 4px !important;
-    }
-
-    .j2-nav-list.open {
-        display: flex !important;
-    }
-
-    .j2-nav-link {
-        padding: 10px 16px !important;
-        border-radius: 4px !important;
-        width: 100% !important;
-        display: block !important;
-    }
-
-    .j2-nav-link:hover,
-    .j2-nav-link.active {
-        background: #FFF5F2 !important;
-        color: #E8490F !important;
     }
 
     .j2-hamburger {
@@ -645,10 +674,11 @@ a {
         justify-content: center !important;
         width: 40px !important;
         height: 40px !important;
+        flex-direction: column !important;
+        gap: 5px !important;
         background: none !important;
         border: 1px solid #E8490F  !important;
         border-radius: 4px !important;
-        font-size: 1.3rem !important;
         cursor: pointer !important;
         color: #333 !important;
     }
@@ -733,13 +763,92 @@ a {
 .eye-icon { width: 20px; height: 20px; }
 </style>
 
+{{-- MENU MOBILE (style template officiel) --}}
+<nav class="j2-mobile-nav" id="j2MobileNav">
+    <a href="{{ url('/') }}"
+       class="{{ request()->is('/') ? 'active' : '' }}">
+        Accueil
+    </a>
+    <a href="{{ route('registration.show') }}"
+       class="{{ request()->routeIs('registration.*') ? 'active' : '' }}">
+        Inscription 
+    </a>
+    <a href="{{ route('public.registrations.index') }}"
+       class="{{ request()->routeIs('public.registrations.*') ? 'active' : '' }}">
+        Liste des inscrits
+    </a>
+    <a href="{{ route('sponsoring.index') }}"
+       class="{{ request()->routeIs('sponsoring.*') ? 'active' : '' }}">
+        Sponsoring
+    </a>
+    <a href="{{ route('projects.index') }}"
+       class="{{ request()->routeIs('projects.*') ? 'active' : '' }}">
+        Projets
+    </a>
+    <a href="{{ route('partners.index') }}"
+       class="{{ request()->routeIs('partners.*') ? 'active' : '' }}">
+        Partenaires
+    </a>
+    @auth('investor')
+    <div class="j2-mobile-nav-divider"></div>
+    <a href="{{ route('investor.dashboard') }}">Mon tableau de bord</a>
+    <form method="POST" action="{{ route('investor.logout') }}" style="margin:0">
+        @csrf
+        <button type="submit" class="j2-mobile-nav-logout">Se déconnecter</button>
+    </form>
+    @endauth
+</nav>
+<div class="j2-mobile-nav-overly" id="j2MobileNavOverly"></div>
+
 <script>
-document.getElementById('hamburger')
-    ?.addEventListener('click', function() {
-        document
-            .querySelector('.j2-nav-list')
-            ?.classList.toggle('open');
+(function () {
+    var hamburger = document.getElementById('j2-hamburger');
+    var mobileNav = document.getElementById('j2MobileNav');
+    var overly    = document.getElementById('j2MobileNavOverly');
+
+    if (!hamburger || !mobileNav) return;
+
+    // Toggle menu
+    hamburger.addEventListener('click', function () {
+        document.body.classList.toggle('j2-mobile-nav-active');
+        if (overly) {
+            overly.style.display =
+                document.body.classList.contains('j2-mobile-nav-active')
+                    ? 'block' : 'none';
+        }
     });
+
+    // Fermer au clic sur overlay
+    if (overly) {
+        overly.addEventListener('click', closeNav);
+    }
+
+    // Fermer au clic sur un lien
+    mobileNav.querySelectorAll('a, button').forEach(function (el) {
+        el.addEventListener('click', closeNav);
+    });
+
+    // Fermer avec Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeNav();
+    });
+
+    // Fermer au clic extérieur
+    document.addEventListener('click', function (e) {
+        if (
+            document.body.classList.contains('j2-mobile-nav-active') &&
+            !mobileNav.contains(e.target) &&
+            !hamburger.contains(e.target)
+        ) {
+            closeNav();
+        }
+    });
+
+    function closeNav() {
+        document.body.classList.remove('j2-mobile-nav-active');
+        if (overly) overly.style.display = 'none';
+    }
+})();
 
 // Investor dropdown toggle
 function toggleInvestorMenu() {
