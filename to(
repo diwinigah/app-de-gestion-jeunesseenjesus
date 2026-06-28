@@ -1,0 +1,9 @@
+18:        $this->token = $token;
+29:            'token' => $this->token,
+30:            'email' => $notifiable->getEmailForPasswordReset(),
+34:            ->subject('Réinitialisation de votre mot de passe — Jeunesse en Jésus')
+35:            ->greeting('Bonjour ' . ($notifiable->name ?? $notifiable->organization_name ?? 'Investisseur') . ',')
+36:            ->line('Vous recevez cet email car une demande de réinitialisation de mot de passe a été effectuée pour votre compte.')
+37:            ->action('Réinitialiser mon mot de passe', $url)
+38:            ->line('Ce lien expirera dans 60 minutes.')
+39:            ->line('Si vous n\'avez pas demandé cette réinitialisation, ignorez cet email.');
