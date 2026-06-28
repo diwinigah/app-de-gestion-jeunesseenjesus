@@ -167,7 +167,7 @@
             <h3 class="j2-footer-title">Liens rapides</h3>
             <ul class="j2-footer-links">
                 <li>
-                    <a href="{{ url('/camp') }}">Inscription </a>
+                    <a href="{{ url('/camp') }}">Inscription Evénement</a>
                 </li>
                 <li>
                     <a href="{{ url('/projets') }}">Projets à financer</a>
