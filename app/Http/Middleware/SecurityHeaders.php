@@ -14,23 +14,19 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        // X-Content-Type-Options: prevent MIME type sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
-
-        // X-Frame-Options: prevent clickjacking
-        $response->header('X-Frame-Options', 'DENY');
-
-        // X-XSS-Protection: enable XSS filtering
-        $response->header('X-XSS-Protection', '1; mode=block');
-
-        // Strict-Transport-Security: force HTTPS
-        $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-
-        // Referrer-Policy: control referrer information
-        $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
-
-        // Permissions-Policy: control feature access
-        $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        if (method_exists($response, 'header')) {
+            $response->header('X-Content-Type-Options', 'nosniff');
+            $response->header('X-Frame-Options', 'SAMEORIGIN');
+            $response->header('X-XSS-Protection', '1; mode=block');
+            $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
+            $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        } else {
+            $response->headers->set('X-Content-Type-Options', 'nosniff');
+            $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+            $response->headers->set('X-XSS-Protection', '1; mode=block');
+            $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+            $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        }
 
         return $response;
     }

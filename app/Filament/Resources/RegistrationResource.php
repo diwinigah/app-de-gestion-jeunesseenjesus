@@ -380,6 +380,12 @@ class RegistrationResource extends Resource
                     ->relationship('editionSection', 'section')
                     ->getOptionLabelFromRecordUsing(fn (EditionSection $record): string => $record->section->label()),
             ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->label('Exporter Excel')
+                    ->exporter(RegistrationExporter::class)
+                    ->formats([ExportFormat::Xlsx]),
+            ])
             ->actions([
                 ActionGroup::make([
                     
@@ -471,10 +477,6 @@ class RegistrationResource extends Resource
                         ->modalHeading('Supprimer les éléments sélectionnés')
                         ->modalDescription('Cette action est irréversible. Êtes-vous sûr de vouloir supprimer les éléments sélectionnés ?')
                         ->modalSubmitActionLabel('Oui, supprimer'),
-                    Tables\Actions\ExportBulkAction::make()
-                        ->label('Exporter Excel')
-                        ->exporter(RegistrationExporter::class)
-                        ->formats([ExportFormat::Xlsx]),
                 ]),
             ])
             ->defaultSort('submitted_at', 'desc');

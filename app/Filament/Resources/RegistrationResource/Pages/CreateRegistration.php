@@ -15,4 +15,9 @@ class CreateRegistration extends CreateRecord
     {
         return 'Inscription creee';
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
