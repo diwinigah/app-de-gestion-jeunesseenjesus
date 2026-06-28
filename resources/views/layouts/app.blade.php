@@ -2,9 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon"
-        type="image/png"
-        href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link rel="shortcut icon"
         type="image/png"
         href="{{ asset('images/logo.png') }}">
@@ -180,6 +178,11 @@
                 </li>
                 <li>
                     <a href="{{ route('sponsoring.index') }}">Sponsoring</a>
+                </li>
+                <li>
+                    <a href="{{ route('investor.login') }}">
+                       Connexion Investisseur
+                    </a>
                 </li>
             </ul>
         </div>

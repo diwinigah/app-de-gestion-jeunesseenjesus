@@ -39,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandName('Jeunesse en Jésus')
             ->brandLogo(asset('images/logo.png'))
+            ->favicon(url('images/logo.png'))
             ->brandLogoHeight('2.75rem')
             ->sidebarCollapsibleOnDesktop()
             ->assets([
