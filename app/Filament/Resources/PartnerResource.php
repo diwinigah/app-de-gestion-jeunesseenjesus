@@ -51,16 +51,17 @@ class PartnerResource extends Resource
                             ->image()
                             ->disk('public')
                             ->directory('partners')
-                            ->maxSize(5120),
+                            ->maxSize(5120)
+                            ->preserveFilenames(false),
 
                         TextInput::make('name')
                             ->label('Nom')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, $set): void {
+                            ->afterStateUpdated(function ($state, $set, ?Partner $record): void {
                                 if ($state !== null) {
-                                    $set('slug', Str::slug($state));
+                                    $set('slug', self::generateUniqueSlug($state, $record?->getKey()));
                                 }
                             }),
 
@@ -68,6 +69,7 @@ class PartnerResource extends Resource
                             ->label('Slug')
                             ->required()
                             ->maxLength(255)
+                            ->dehydrateStateUsing(fn (?string $state, ?Partner $record): string => self::generateUniqueSlug($state, $record?->getKey()))
                             ->unique('partners', 'slug', ignoreRecord: true),
 
                         Select::make('type')
@@ -79,6 +81,7 @@ class PartnerResource extends Resource
                                 'individual' => 'Individu',
                                 'other' => 'Autre',
                             ])
+                            ->required()
                             ->native(false),
 
                         Textarea::make('description')
@@ -219,5 +222,22 @@ class PartnerResource extends Resource
             'create' => Pages\CreatePartner::route('/create'),
             'edit' => Pages\EditPartner::route('/{record}/edit'),
         ];
+    }
+
+    private static function generateUniqueSlug(?string $value, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug((string) $value);
+        $slug = $slug !== '' ? $slug : 'partner';
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (Partner::where('slug', $slug)
+            ->when($ignoreId !== null, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        return $slug;
     }
 }

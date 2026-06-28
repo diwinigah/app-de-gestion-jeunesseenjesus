@@ -57,7 +57,8 @@ class PartnerRequestResource extends Resource
                         TextInput::make('email')
                             ->label('Email')
                             ->email()
-                            ->required(),
+                            ->nullable()
+                            ->required(false),
 
                         TextInput::make('phone')
                             ->label('Téléphone')
