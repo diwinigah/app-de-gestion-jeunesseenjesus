@@ -3,6 +3,7 @@
 use App\Http\Controllers\Investor\InvestorAuthController;
 use App\Http\Controllers\Investor\InvestorController;
 use App\Http\Controllers\Investor\InvestorPasswordResetController;
+use App\Http\Controllers\Investor\ProfileController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegistrationController;
@@ -83,6 +84,14 @@ Route::prefix('investisseur')->group(function (): void {
     });
 });
 
+Route::get('/investisseur/profil', [ProfileController::class, 'show'])
+    ->middleware('auth:investor')
+    ->name('investor.profile');
+
+Route::post('/investisseur/profil', [ProfileController::class, 'update'])
+    ->middleware('auth:investor')
+    ->name('investor.profile.update');
+
 // Investissements
 Route::prefix('projets')->group(function (): void {
     Route::get('{project:slug}/investir', [InvestorController::class, 'showInvestForm'])
@@ -96,4 +105,3 @@ Route::prefix('projets')->group(function (): void {
 // Page publique sponsoring
 Route::get('/sponsoring', [SponsoringController::class, 'index'])
     ->name('sponsoring.index');
-

@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -316,6 +317,19 @@ class CampEditionResource extends Resource
                         ->modalCancelActionLabel('Fermer'),
                     Tables\Actions\EditAction::make()
                         ->label('Modifier'),
+                    DeleteAction::make()
+                        ->action(function ($record) {
+                            if ($record->hasRegistrations()) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Suppression impossible')
+                                    ->body('Cette édition contient des inscriptions liées. Archivez-la plutôt que de la supprimer.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                                return;
+                            }
+                            $record->delete();
+                        }),
                 ])
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->tooltip('Actions')
@@ -324,6 +338,16 @@ class CampEditionResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->before(function ($records, $action): void {
+                            if ($records->contains(fn (CampEdition $record): bool => $record->registrations()->count() > 0)) {
+                                $action->cancel();
+                                Notification::make()
+                                    ->title('Suppression impossible')
+                                    ->body('Cette édition contient des inscriptions. Archivez-la plutôt.')
+                                    ->danger()
+                                    ->send();
+                            }
+                        })
                         ->requiresConfirmation()
                         ->label('Supprimer la sélection')
                         ->modalHeading('Supprimer les éléments sélectionnés')

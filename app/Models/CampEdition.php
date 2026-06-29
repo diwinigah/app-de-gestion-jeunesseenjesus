@@ -103,6 +103,13 @@ class CampEdition extends Model
         return $this->hasMany(EditionSection::class);
     }
 
+    public function hasRegistrations(): bool
+    {
+        return $this->sections()
+            ->whereHas('registrations')
+            ->exists();
+    }
+
     public function scopeOpen(Builder $query): Builder
     {
         return $query->where('status', CampEditionStatus::Open->value);

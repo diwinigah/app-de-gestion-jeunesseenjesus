@@ -117,6 +117,7 @@
                             </svg>
                             Mon tableau de bord
                         </a>
+                        <a href="{{ route('investor.profile') }}" class="investor-menu-item">Mon profil</a>
 
                         <form method="POST" action="{{ route('investor.logout') }}" class="investor-logout-form">
                             @csrf
@@ -765,8 +766,8 @@ body.j2-mobile-nav-active .j2-hamburger span:nth-child(3) {
 
 {{-- MENU MOBILE (style template officiel) --}}
 <nav class="j2-mobile-nav" id="j2MobileNav">
-    <a href="{{ url('/') }}"
-       class="{{ request()->is('/') ? 'active' : '' }}">
+    <a href="{{ url('https://jeunesseenjesus.org') }}"
+       class="{{ request()->is('https://jeunesseenjesus.org') ? 'active' : '' }}">
         Accueil
     </a>
     <a href="{{ route('registration.show') }}"
@@ -792,6 +793,7 @@ body.j2-mobile-nav-active .j2-hamburger span:nth-child(3) {
     @auth('investor')
     <div class="j2-mobile-nav-divider"></div>
     <a href="{{ route('investor.dashboard') }}">Mon tableau de bord</a>
+    <a href="{{ route('investor.profile') }}">Mon profil</a>
     <form method="POST" action="{{ route('investor.logout') }}" style="margin:0">
         @csrf
         <button type="submit" class="j2-mobile-nav-logout">Se déconnecter</button>
