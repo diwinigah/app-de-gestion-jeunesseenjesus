@@ -345,6 +345,19 @@
 .sp-payment-icon .sp-icon svg { width: 36px; height: 36px; color: #3D2B1F; }
 .sp-payment-card h4 { font-weight: 800; color: #3D2B1F; margin-bottom: 0.4rem; font-size: 0.88rem; }
 .sp-payment-card p { font-size: 0.8rem; color: #555; margin: 0.2rem 0; line-height: 1.5; word-break: break-all; }
+.sp-payment-tel {
+    display: inline-block;
+    margin-top: 0.4rem;
+    color: #E8490F;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.sp-payment-tel:hover {
+    color: #3D2B1F;
+    text-decoration: underline;
+}
 .sp-payment-btn {
     display: inline-block;
     margin-top: 0.6rem;
@@ -651,7 +664,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 00-2-2h-3l-2-3H10L8 6H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2z"/></svg>
                 </span></div>
                 <h4>Flooz</h4>
-                <p>{{ e($edition->payment_flooz) }}</p>
+                <a href="tel:{{ preg_replace('/\s+/', '', $edition->payment_flooz) }}"
+                   class="sp-payment-tel">
+                    {{ $edition->payment_flooz }}
+                </a>
             </div>
             @endif
 
@@ -661,7 +677,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 00-2-2h-3l-2-3H10L8 6H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2z"/></svg>
                 </span></div>
                 <h4>Mixx by YAS</h4>
-                <p>{{ e($edition->payment_mixx) }}</p>
+                <a href="tel:{{ preg_replace('/\s+/', '', $edition->payment_mixx) }}"
+                   class="sp-payment-tel">
+                    {{ $edition->payment_mixx }}
+                </a>
             </div>
             @endif
 
