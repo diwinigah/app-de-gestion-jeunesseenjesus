@@ -743,3 +743,286 @@
 @endif
 
 @endsection
+
+@push('scripts')
+<style>
+/* ═══════════════════════════════════
+   ANIMATIONS SPONSORING
+═══════════════════════════════════ */
+
+/* Éléments animables — état initial */
+.sp-anim-fade {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.sp-anim-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.sp-anim-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.sp-anim-zoom {
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* État visible après IntersectionObserver */
+.sp-anim-fade.sp-visible,
+.sp-anim-left.sp-visible,
+.sp-anim-right.sp-visible,
+.sp-anim-zoom.sp-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Délais échelonnés */
+.sp-delay-1 { transition-delay: 0.1s; }
+.sp-delay-2 { transition-delay: 0.2s; }
+.sp-delay-3 { transition-delay: 0.3s; }
+.sp-delay-4 { transition-delay: 0.4s; }
+.sp-delay-5 { transition-delay: 0.5s; }
+
+/* Hover cards */
+.sp-bourse-card,
+.sp-categorie-card,
+.sp-payment-card,
+.sp-progress-card,
+.sp-nature-card {
+    transition: transform 0.22s ease, box-shadow 0.22s ease,
+                border-color 0.22s ease !important;
+}
+.sp-bourse-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 12px 28px rgba(232,73,15,0.13) !important;
+}
+.sp-categorie-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 20px rgba(232,73,15,0.10) !important;
+    border-color: #E8490F !important;
+}
+.sp-payment-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
+}
+.sp-nature-card:hover {
+    transform: translateX(4px) !important;
+    box-shadow: 0 4px 14px rgba(232,73,15,0.08) !important;
+}
+
+/* Barre de progression animée au scroll */
+.sp-progress-fill {
+    width: 0% !important;
+    transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-progress-fill.sp-bar-active {
+    width: var(--sp-bar-target) !important;
+}
+
+/* Pulse sur les boutons CTA */
+@keyframes sp-pulse {
+    0%, 100% { box-shadow: 0 4px 14px rgba(232,73,15,0.25); }
+    50%       { box-shadow: 0 4px 24px rgba(232,73,15,0.55); }
+}
+.sp-budget-link-btn,
+.sp-payment-btn {
+    animation: sp-pulse 2.8s ease-in-out infinite;
+}
+.sp-budget-link-btn:hover,
+.sp-payment-btn:hover {
+    animation: none;
+    transform: translateY(-2px);
+}
+
+/* Hero image parallax léger */
+.sp-hero img {
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .sp-anim-fade, .sp-anim-left, .sp-anim-right, .sp-anim-zoom {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    .sp-progress-fill { transition: none !important; }
+    .sp-budget-link-btn, .sp-payment-btn { animation: none !important; }
+}
+</style>
+
+<script>
+(function () {
+    'use strict';
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    /* ═══════════════════════
+       1. AJOUTER CLASSES ANIM
+    ═══════════════════════ */
+    function addAnimClasses() {
+        // Hero — zoom
+        var hero = document.querySelector('.sp-hero, .sp-hero-no-img');
+        if (hero) hero.classList.add('sp-anim-zoom');
+
+        // Intro — fade
+        var intro = document.querySelector('.sp-intro');
+        if (intro) intro.classList.add('sp-anim-fade');
+
+        // Toutes les sections — fade
+        document.querySelectorAll('.sp-section').forEach(function (el, i) {
+            el.classList.add('sp-anim-fade');
+            if (i > 0) el.classList.add('sp-delay-' + Math.min(i, 5));
+        });
+
+        // Titres de section — depuis la gauche
+        document.querySelectorAll('.sp-section-title').forEach(function (el) {
+            el.classList.add('sp-anim-left');
+        });
+
+        // Bourse duo — cards échelonnées
+        document.querySelectorAll('.sp-bourse-duo .sp-bourse-card').forEach(function (el, i) {
+            el.classList.add('sp-anim-zoom');
+            el.classList.add('sp-delay-' + (i + 1));
+        });
+
+        // Catégories — échelonnées
+        document.querySelectorAll('.sp-categorie-card').forEach(function (el, i) {
+            el.classList.add('sp-anim-fade');
+            el.classList.add('sp-delay-' + Math.min(i + 1, 5));
+        });
+
+        // Cards paiement — depuis la droite
+        document.querySelectorAll('.sp-payment-card').forEach(function (el, i) {
+            el.classList.add('sp-anim-right');
+            el.classList.add('sp-delay-' + Math.min(i + 1, 5));
+        });
+
+        // Cards nature — fade
+        document.querySelectorAll('.sp-nature-card').forEach(function (el, i) {
+            el.classList.add('sp-anim-fade');
+            el.classList.add('sp-delay-' + Math.min(i + 1, 5));
+        });
+
+        // Progress cards — zoom
+        document.querySelectorAll('.sp-progress-card').forEach(function (el, i) {
+            el.classList.add('sp-anim-zoom');
+            el.classList.add('sp-delay-' + (i + 1));
+        });
+
+        // Contact — fade
+        var contact = document.querySelector('.sp-contact');
+        if (contact) contact.classList.add('sp-anim-fade');
+
+        // Liens externes — zoom
+        document.querySelectorAll('.sp-budget-link-btn').forEach(function (el, i) {
+            el.classList.add('sp-anim-zoom');
+            el.classList.add('sp-delay-' + Math.min(i + 1, 5));
+        });
+    }
+
+    /* ═══════════════════════
+       2. INTERSECTION OBSERVER
+    ═══════════════════════ */
+    function initScrollAnimations() {
+        var targets = document.querySelectorAll(
+            '.sp-anim-fade, .sp-anim-left, .sp-anim-right, .sp-anim-zoom'
+        );
+        if (!targets.length) return;
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('sp-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        targets.forEach(function (el) { observer.observe(el); });
+    }
+
+    /* ═══════════════════════
+       3. BARRES DE PROGRESSION
+    ═══════════════════════ */
+    function initProgressBars() {
+        var bars = document.querySelectorAll('.sp-progress-fill');
+        if (!bars.length) return;
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    var bar = entry.target;
+                    var target = bar.style.width || '0%';
+                    bar.style.setProperty('--sp-bar-target', target);
+                    bar.style.width = '0%';
+                    requestAnimationFrame(function () {
+                        setTimeout(function () {
+                            bar.classList.add('sp-bar-active');
+                        }, 200);
+                    });
+                    observer.unobserve(bar);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        bars.forEach(function (bar) { observer.observe(bar); });
+    }
+
+    /* ═══════════════════════
+       4. HERO CHARGEMENT
+    ═══════════════════════ */
+    function initHeroEntrance() {
+        var hero = document.querySelector('.sp-hero, .sp-hero-no-img');
+        if (!hero) return;
+        hero.style.opacity = '0';
+        hero.style.transform = 'scale(0.97)';
+        hero.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        requestAnimationFrame(function () {
+            setTimeout(function () {
+                hero.style.opacity = '1';
+                hero.style.transform = 'scale(1)';
+            }, 80);
+        });
+    }
+
+    /* ═══════════════════════
+       5. PARALLAX HERO (desktop)
+    ═══════════════════════ */
+    function initParallax() {
+        var heroImg = document.querySelector('.sp-hero img');
+        if (!heroImg) return;
+        if (window.innerWidth < 768) return;
+
+        window.addEventListener('scroll', function () {
+            var scrollY = window.scrollY;
+            var offset  = scrollY * 0.15;
+            heroImg.style.transform = 'translateY(' + offset + 'px) scale(1.05)';
+        }, { passive: true });
+    }
+
+    /* ═══════════════════════
+       INIT
+    ═══════════════════════ */
+    function init() {
+        addAnimClasses();
+        initScrollAnimations();
+        initProgressBars();
+        initHeroEntrance();
+        initParallax();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+@endpush
