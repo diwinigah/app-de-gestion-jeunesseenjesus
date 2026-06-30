@@ -148,36 +148,32 @@ class SponsoringResource extends Resource
                             TextInput::make('bourse_adulte_amount')
                                 ->label('Montant catégorie 1 (FCFA)')
                                 ->numeric()
-                                ->default(0)
                                 ->minValue(0)
-                                ->required(),
+                                ->nullable(),
                             TextInput::make('categorie_etudiant_label')
                                 ->label('Label catégorie 2')
                                 ->default('Étudiant'),
                             TextInput::make('bourse_etudiant_amount')
                                 ->label('Montant catégorie 2 (FCFA)')
                                 ->numeric()
-                                ->default(0)
                                 ->minValue(0)
-                                ->required(),
+                                ->nullable(),
                             TextInput::make('categorie_lycee_label')
                                 ->label('Label catégorie 3')
                                 ->default('Lycée / Collège'),
                             TextInput::make('bourse_lycee_amount')
                                 ->label('Montant catégorie 3 (FCFA)')
                                 ->numeric()
-                                ->default(0)
                                 ->minValue(0)
-                                ->required(),
+                                ->nullable(),
                             TextInput::make('categorie_enfant_label')
                                 ->label('Label catégorie 4')
                                 ->default('Enfant'),
                             TextInput::make('bourse_enfant_amount')
                                 ->label('Montant catégorie 4 (FCFA)')
                                 ->numeric()
-                                ->default(0)
                                 ->minValue(0)
-                                ->required(),
+                                ->nullable(),
                         ]),
                     ]),
 

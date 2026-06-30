@@ -36,9 +36,13 @@ class EditSponsoring extends EditRecord
             'bourse_pleine_label', 'bourse_pleine_desc',
             'bourse_partielle_label', 'bourse_partielle_desc',
             'bourse_adulte_amount',
+            'categorie_adulte_label',
             'bourse_etudiant_amount',
+            'categorie_etudiant_label',
             'bourse_lycee_amount',
+            'categorie_lycee_label',
             'bourse_enfant_amount',
+            'categorie_enfant_label',
             'payment_flooz',
             'payment_mixx',
             'payment_iban',
@@ -58,9 +62,7 @@ class EditSponsoring extends EditRecord
 
         // Forcer 0 si null sur les champs numériques NOT NULL
         $numericNotNull = [
-            'bourse_pleine_amount', 'bourse_adulte_amount',
-            'bourse_etudiant_amount', 'bourse_lycee_amount',
-            'bourse_enfant_amount', 'budget_total', 'budget_collected',
+            'bourse_pleine_amount', 'budget_total', 'budget_collected',
             'participants_target', 'participants_sponsored',
         ];
 
