@@ -47,7 +47,7 @@ class NewPartnerRequestNotification extends Notification implements ShouldQueue
             ->line('**Email :** ' . ($this->request->email ?? 'Non fourni'))
             ->line('**Type :** ' . ($this->request->type?->label() ?? 'Non spécifié'))
             ->line('**Message :** ' . ($this->request->message ?? 'Aucun'))
-            ->action('Voir la demande', url('/admin/partner-requests/' . $this->request->id . '/edit'));
+            ->action('Voir la demande', route('filament.admin.resources.partner-requests.edit', ['record' => $this->request->id]));
     }
 
     /**
@@ -65,7 +65,7 @@ class NewPartnerRequestNotification extends Notification implements ShouldQueue
             ->actions([
                 FilamentAction::make('voir')
                     ->label('Voir la demande')
-                    ->url('/admin/partner-requests/' . $this->request->id . '/edit')
+                    ->url(route('filament.admin.resources.partner-requests.edit', ['record' => $this->request->id]))
                     ->button(),
             ])
             ->getDatabaseMessage();

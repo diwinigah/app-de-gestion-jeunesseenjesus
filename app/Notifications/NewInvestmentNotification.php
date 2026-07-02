@@ -59,7 +59,7 @@ class NewInvestmentNotification extends Notification implements ShouldQueue
             ->actions([
                 FilamentAction::make('voir')
                     ->label('Voir la proposition')
-                    ->url('/admin/resources/investor-interests')
+                    ->url(route('filament.admin.resources.investor-interests.index'))
                     ->button(),
             ])
             ->getDatabaseMessage();

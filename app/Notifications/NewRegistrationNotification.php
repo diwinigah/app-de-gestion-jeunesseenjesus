@@ -43,7 +43,7 @@ class NewRegistrationNotification extends Notification implements ShouldQueue
             ->line('Ville : ' . ($registration->city ?? 'Non renseignée'))
             ->line('Edition : ' . $registration->campEdition->name)
             ->line('Section : ' . $registration->editionSection->section->label())
-            ->action('Voir les inscriptions', url('/admin/registrations'));
+            ->action('Voir les inscriptions', route('filament.admin.resources.registrations.index'));
     }
 
     /**
@@ -67,7 +67,7 @@ class NewRegistrationNotification extends Notification implements ShouldQueue
             ->actions([
                 FilamentAction::make('voir')
                     ->label('Voir l\'inscription')
-                    ->url('/admin/registrations/' . $registration->id . '/edit')
+                    ->url(route('filament.admin.resources.registrations.edit', ['record' => $registration->id]))
                     ->button(),
             ])
             ->getDatabaseMessage();
