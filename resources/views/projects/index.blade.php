@@ -34,7 +34,7 @@
 
 @section('content')
 <header class="proj-header">
-    <div class="proj-eyebrow">Projets</div>
+    <div class="proj-eyebrow"> </div>
     <h1 class="proj-h1">Projets à financer</h1>
     <p class="proj-lead">Découvrez les projets publiés et accompagnez ceux qui construisent l'avenir de Jeunesse en Jésus.</p>
 </header>
@@ -63,17 +63,17 @@
                     <p class="proj-summary">{{ $project->summary }}</p>
 
                     <div class="proj-amounts">
-                        <span>{{ number_format((float) $project->funded_amount, 0, ',', ' ') }} XOF</span>
+                        <span>{{ number_format((float) $project->funded_amount, 0, ',', ' ') }} F CFA</span>
                         <span>{{ number_format($progress, 2, ',', ' ') }} %</span>
                     </div>
                     <div class="proj-progress" aria-label="Progression du financement">
                         <span style="width: {{ $progress }}%"></span>
                     </div>
-                    <p class="proj-goal">Collecté : {{ number_format($project->funded_amount, 0, ',', ' ') }} XOF | Objectif : {{ number_format($project->funding_goal, 0, ',', ' ') }} XOF</p>
+                    <p class="proj-goal">Collecté : {{ number_format($project->funded_amount, 0, ',', ' ') }} F CFA | Objectif : {{ number_format($project->funding_goal, 0, ',', ' ') }} F CFA</p>
 
                     <div class="proj-actions">
-                        <a class="proj-btn primary" href="{{ route('projects.show', ['project' => $project->slug]) }}">Voir</a>
-                        <a class="proj-btn secondary" href="{{ route('projects.invest.form', ['project' => $project->slug]) }}">Investir</a>
+                        <a class="proj-btn primary" href="{{ route('projects.show', ['project' => $project->slug]) }}">Voir Plus</a>
+                        <a class="proj-btn secondary" href="{{ route('projects.invest.form', ['project' => $project->slug]) }}">Exprimer un intérêt</a>
                     </div>
                 </div>
             </article>

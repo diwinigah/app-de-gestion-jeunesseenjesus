@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\InvestorStatus;
 use App\Enums\ProjectInvestorInterestStatus;
 use App\Enums\ProjectStatus;
+use App\Models\InvestorUser;
 use App\Models\Project;
+use App\Notifications\NewProjectPublishedNotification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -40,10 +43,20 @@ class ProjectService
 
     public function publishProject(Project $project): void
     {
+        $wasAlreadyPublished = $project->status === ProjectStatus::Published;
+
         $project->update([
             'status' => ProjectStatus::Published,
             'published_at' => $project->published_at ?? now(),
         ]);
+
+        if ($wasAlreadyPublished) {
+            return;
+        }
+
+        InvestorUser::query()
+            ->whereNotNull('email')
+            ->each(fn (InvestorUser $investor) => $investor->notify(new NewProjectPublishedNotification($project)));
     }
 
     public function archiveProject(Project $project): void

@@ -50,11 +50,11 @@
                 <div class="proj-show-funding-top">
                     <div>
                         <p class="proj-show-label">Montant collecté</p>
-                        <p class="proj-show-collected">{{ number_format((float) $project->funded_amount, 0, ',', ' ') }} XOF</p>
+                        <p class="proj-show-collected">{{ number_format((float) $project->funded_amount, 0, ',', ' ') }} F CFA</p>
                     </div>
                     <div>
                         <p class="proj-show-label">Objectif</p>
-                        <p class="proj-show-goal">{{ number_format((float) $project->funding_goal, 0, ',', ' ') }} XOF</p>
+                        <p class="proj-show-goal">{{ number_format((float) $project->funding_goal, 0, ',', ' ') }}F CFA</p>
                     </div>
                 </div>
 
@@ -62,14 +62,14 @@
                     <span style="width: {{ $progress }}%"></span>
                 </div>
                 <p class="proj-show-percentage">{{ number_format($progress, 2, ',', ' ') }} % financé</p>
-                <p class="proj-show-label">Collecté : {{ number_format($project->funded_amount, 0, ',', ' ') }} XOF | Objectif : {{ number_format($project->funding_goal, 0, ',', ' ') }} XOF</p>
+                <p class="proj-show-label">Collecté : {{ number_format($project->funded_amount, 0, ',', ' ') }} F CFA | Objectif : {{ number_format($project->funding_goal, 0, ',', ' ') }} F CFA</p>
             </section>
 
             <div class="proj-show-description">
                 {!! $project->description !!}
             </div>
 
-            <a class="proj-show-invest" href="{{ route('projects.invest.form', ['project' => $project->slug]) }}">Investir</a>
+            <a class="proj-show-invest" href="{{ route('projects.invest.form', ['project' => $project->slug]) }}">Exprimer un intérêt</a>
         </div>
     </article>
 </div>

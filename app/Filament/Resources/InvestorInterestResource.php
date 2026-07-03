@@ -8,6 +8,7 @@ use App\Enums\ProjectInvestorInterestStatus;
 use App\Filament\Resources\InvestorInterestResource\Pages;
 use App\Models\InvestorUser;
 use App\Models\ProjectInvestorInterest;
+use App\Notifications\InvestmentConfirmedNotification;
 use App\Services\ProjectService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -256,10 +257,56 @@ class InvestorInterestResource extends Resource
                                 'status' => ProjectInvestorInterestStatus::Paid,
                             ]);
 
+                            $record->loadMissing(['investorUser', 'project']);
+
+                            $emailTo = $record->investorUser ?? null;
+                            $manualEmail = $record->manual_email ?? null;
+
+                            if ($emailTo) {
+                                $emailTo->notify(new InvestmentConfirmedNotification($record));
+                            } elseif ($manualEmail) {
+                                \Illuminate\Support\Facades\Notification::route('mail', $manualEmail)
+                                    ->notify(new InvestmentConfirmedNotification($record));
+                            }
+
                             app(ProjectService::class)->updateFundedAmount($record->project);
 
                             Notification::make()
                                 ->title('Paiement enregistré')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('send_confirmation')
+                        ->label('Envoyer confirmation')
+                        ->icon('heroicon-o-envelope')
+                        ->color('info')
+                        ->requiresConfirmation()
+                        ->modalHeading('Envoyer email de confirmation')
+                        ->modalDescription('Un email de confirmation de paiement sera envoyé à cet investisseur.')
+                        ->modalSubmitActionLabel('Envoyer')
+                        ->visible(fn (ProjectInvestorInterest $record) => $record->status === ProjectInvestorInterestStatus::Paid)
+                        ->action(function (ProjectInvestorInterest $record): void {
+                            $record->loadMissing(['investorUser', 'project']);
+
+                            $emailTo = $record->investorUser ?? null;
+                            $manualEmail = $record->manual_email ?? null;
+
+                            if ($emailTo) {
+                                $emailTo->notify(new InvestmentConfirmedNotification($record));
+                            } elseif ($manualEmail) {
+                                \Illuminate\Support\Facades\Notification::route('mail', $manualEmail)
+                                    ->notify(new InvestmentConfirmedNotification($record));
+                            } else {
+                                Notification::make()
+                                    ->title('Aucun email disponible')
+                                    ->warning()
+                                    ->send();
+                                return;
+                            }
+
+                            Notification::make()
+                                ->title('Confirmation envoyée')
+                                ->body('L\'email de confirmation a été envoyé avec succès.')
                                 ->success()
                                 ->send();
                         }),

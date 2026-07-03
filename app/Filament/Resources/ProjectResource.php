@@ -171,6 +171,26 @@ class ProjectResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+                    Tables\Actions\Action::make('notify_investors')
+                        ->label('Notifier les investisseurs')
+                        ->icon('heroicon-o-bell')
+                        ->color('info')
+                        ->requiresConfirmation()
+                        ->modalHeading('Notifier les investisseurs')
+                        ->modalDescription('Un email sera envoyé à tous les investisseurs pour ce projet.')
+                        ->modalSubmitActionLabel('Envoyer')
+                        ->visible(fn ($record) => $record->status === \App\Enums\ProjectStatus::Published)
+                        ->action(function ($record) {
+                            \App\Models\InvestorUser::whereNotNull('email')
+                                ->each(fn ($investor) => $investor->notify(
+                                    new \App\Notifications\NewProjectPublishedNotification($record)
+                                ));
+                            \Filament\Notifications\Notification::make()
+                                ->title('Notifications envoyées')
+                                ->body('Tous les investisseurs ont été notifiés.')
+                                ->success()
+                                ->send();
+                        }),
                     Tables\Actions\Action::make('archive')
                         ->label('Archiver')
                         ->icon('heroicon-o-archive-box')
